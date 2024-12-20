@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import seaborn as sns
 import json
+import math
 
 statistic = {}
 
@@ -66,15 +67,29 @@ for g in range(len(labels) // 4):
                 lab = f"lab_id{labs_id[k]}"
                 statistic[parameter][lab] = {}
                 data = df[df["lab_id"] == labs_id[k]].filter(items=[parameter])
-                statistic[parameter][lab]["min"] = float(data[parameter].min())
-                statistic[parameter][lab]["max"] = float(data[parameter].max())
-                statistic[parameter][lab]["mean"] = float(data[parameter].mean())
-                statistic[parameter][lab]["std"] = float(data[parameter].std())
+                statistic[parameter][lab]["min"] = round(
+                    float((data[parameter].min())), 4
+                )
+                statistic[parameter][lab]["max"] = round(
+                    float(data[parameter].max()), 4
+                )
+                statistic[parameter][lab]["mean"] = round(
+                    float(data[parameter].mean()), 4
+                )
+                statistic[parameter][lab]["std"] = round(
+                    float(data[parameter].std()), 4
+                )
+                if math.isnan(data[parameter].std()):
+                    statistic[parameter][lab]["std"] = round(-1.0, 4)
+                    print(
+                        f"Дисперсия NaN у показателя {parameter} в лаборатории {labs_id[k]}"
+                    )
+                    continue
                 sns.kdeplot(
                     data[parameter],
                     ax=axes[i, j],
                     fill=True,
-                    label=f"Лаборатория {labs_id[k]}",
+                    label=f"Лаб. {labs_id[k]}",
                 )
             axes[i, j].legend(loc="upper right")
     plt.subplots_adjust(hspace=0.5)
