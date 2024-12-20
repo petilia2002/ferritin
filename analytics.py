@@ -1,42 +1,87 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import seaborn as sns
+import json
 
-df = pd.read_csv("data/lab.csv", sep=",", dtype={"sampleno": str, "hgb": float})
+statistic = {}
+
+labels = [
+    "age",
+    "hgb",
+    "rbc",
+    "mcv",
+    "plt",
+    "wbc",
+    "neut",
+    "lymph",
+    "eo",
+    "baso",
+    "mono",
+    "ferritin",
+]
+
+df = pd.read_csv("./data/lab.csv", sep=",", dtype={"sampleno": str, "hgb": float})
 print(df.head())
 print(df.shape)
-print(df.dtypes)
 
-age_cleaned = df["age"]
-# Вычисление статистик только для 'age'
-min_value = age_cleaned.min()
-max_value = age_cleaned.max()
-mean_value = age_cleaned.mean()
-std_dev = age_cleaned.std()
+labs_id = np.unique(df["lab_id"].values.ravel())
+print(labs_id)
+print(labs_id.size)
 
-# Вывод результатов
-print(f"Минимум: {min_value}")
-print(f"Максимум: {max_value}")
-print(f"Среднее: {mean_value}")
-print(f"Стандартное отклонение: {std_dev}")
+gender_labels = {0: "Женщины", 1: "Мужчины"}
+counts_df = df["gender"].value_counts(normalize=True) * 100
+counts_df.index = counts_df.index.map(gender_labels)
+color_labels = [
+    "lightblue" if label == "Мужчины" else "pink" for label in counts_df.index
+]
 
-fig, axes = plt.subplots(1, 1, figsize=(10, 5), sharex=False)
-axes.set_title("Плотность распределения возрастов")
-axes.set_xlabel("Кол-во лет")
-axes.set_ylabel("Значение плотности")
-sns.kdeplot(
-    df["age"],
-    ax=axes,
-    fill=True,
-    label="Возраст",
-    # bw_adjust=0.5,
-    # clip=(min_value, max_value),
-)
-axes.legend(loc="upper right")
-plt.show()
+plt.figure(figsize=(12, 6))
+counts_df.plot(kind="bar", color=color_labels)
+plt.title("Гистограмма распределения пациентов по полу", fontsize=12)
+plt.xlabel(f"Пол пациентов", fontsize=10)
+plt.xticks(rotation=0)
+plt.ylabel(f"Доля пациентов, %", fontsize=10)
 
+legend_men = mpatches.Patch(color="lightblue", label="Мужчины")
+legend_women = mpatches.Patch(color="pink", label="Женщины")
+plt.legend(handles=[legend_women, legend_men], loc="upper right")
 
-df1 = df[df["age"] == 110]
-print(df1.head())
-print(df.shape[0] == df1.shape[0])
+# plt.savefig("./browse_data_images/gender_hist.png", dpi=300)
+
+for g in range(len(labels) // 4):
+    rows, cols = 2, 2
+    fig, axes = plt.subplots(rows, cols, figsize=(12, 6))
+    for i in range(rows):
+        for j in range(cols):
+            parameter = labels[g * (rows + cols) + i * rows + j]
+            axes[i, j].set_title(
+                f"Распределение показателя {parameter} по лабораториям", pad=10
+            )
+            axes[i, j].set_xlabel(f"{parameter}", labelpad=1)
+            axes[i, j].set_ylabel("Значение плотности", labelpad=10)
+            statistic[parameter] = {}
+            for k in range(labs_id.size):
+                lab = f"lab_id{labs_id[k]}"
+                statistic[parameter][lab] = {}
+                data = df[df["lab_id"] == labs_id[k]].filter(items=[parameter])
+                statistic[parameter][lab]["min"] = float(data[parameter].min())
+                statistic[parameter][lab]["max"] = float(data[parameter].max())
+                statistic[parameter][lab]["mean"] = float(data[parameter].mean())
+                statistic[parameter][lab]["std"] = float(data[parameter].std())
+                sns.kdeplot(
+                    data[parameter],
+                    ax=axes[i, j],
+                    fill=True,
+                    label=f"Лаборатория {labs_id[k]}",
+                )
+            axes[i, j].legend(loc="upper right")
+    plt.subplots_adjust(hspace=0.5)
+    plt.savefig(
+        f"./browse_data_images/lab_dist_page_{g + 1}.png", dpi=300, bbox_inches="tight"
+    )
+    plt.show()
+
+with open("./data/labs.json", "w", encoding="utf-8") as file:
+    json.dump(statistic, file, ensure_ascii=False, indent=4)
