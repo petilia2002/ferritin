@@ -6,17 +6,21 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.utils import shuffle
 from sklearn.metrics import roc_curve, auc
+import tensorflow as tf
 import keras
 from keras.api.layers import Input, Dense, Dropout
 from keras.api.models import Model
 from keras.api.utils import set_random_seed
 from keras.api.models import load_model
 from keras.api.callbacks import EarlyStopping, ReduceLROnPlateau
+import random
 
 train_model_mode = True  # обучаем модель или загружаем уже обученную
 # Установим seed для воспроизводимости результатов:
 seed = 42
+random.seed(seed)
 np.random.seed(seed)
+tf.random.set_seed(seed)
 set_random_seed(seed)
 
 # Прочитаем данные:
@@ -128,7 +132,7 @@ if train_model_mode:
         verbose=2,
         validation_split=0.2,
         shuffle=True,
-        class_weight=None,
+        class_weight=class_weight,
         callbacks=[early_stopping, reduce_lr],
     )
     # Сохраним ее в файл:
