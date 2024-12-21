@@ -49,8 +49,9 @@ legend_men = mpatches.Patch(color="lightblue", label="Мужчины")
 legend_women = mpatches.Patch(color="pink", label="Женщины")
 plt.legend(handles=[legend_women, legend_men], loc="upper right")
 
-# plt.savefig("./browse_data_images/gender_hist.png", dpi=300)
+plt.savefig("./browse_data_images/gender_hist.png", dpi=300)
 
+z_score = 1.96
 for g in range(len(labels) // 4):
     rows, cols = 2, 2
     fig, axes = plt.subplots(rows, cols, figsize=(12, 6))
@@ -63,35 +64,43 @@ for g in range(len(labels) // 4):
             axes[i, j].set_xlabel(f"{parameter}", labelpad=1)
             axes[i, j].set_ylabel("Значение плотности", labelpad=10)
             statistic[parameter] = {}
+
             for k in range(labs_id.size):
                 lab = f"lab_id{labs_id[k]}"
                 statistic[parameter][lab] = {}
                 data = df[df["lab_id"] == labs_id[k]].filter(items=[parameter])
-                statistic[parameter][lab]["min"] = round(
-                    float((data[parameter].min())), 4
+
+                min_value = float((data[parameter].min()))
+                max_value = float((data[parameter].max()))
+                mean_value = float((data[parameter].mean()))
+                std_value = float((data[parameter].std()))
+
+                statistic[parameter][lab]["min"] = round(min_value, 4)
+                statistic[parameter][lab]["max"] = round(max_value, 4)
+                statistic[parameter][lab]["mean"] = round(mean_value, 4)
+                statistic[parameter][lab]["std"] = round(std_value, 4)
+
+                low, high = (
+                    mean_value - z_score * std_value,
+                    mean_value + z_score * std_value,
                 )
-                statistic[parameter][lab]["max"] = round(
-                    float(data[parameter].max()), 4
-                )
-                statistic[parameter][lab]["mean"] = round(
-                    float(data[parameter].mean()), 4
-                )
-                statistic[parameter][lab]["std"] = round(
-                    float(data[parameter].std()), 4
-                )
-                if math.isnan(data[parameter].std()):
+                data = data[(data[parameter] >= low) & (data[parameter] <= high)]
+
+                if math.isnan(std_value):
                     statistic[parameter][lab]["std"] = round(-1.0, 4)
                     print(
                         f"Дисперсия NaN у показателя {parameter} в лаборатории {labs_id[k]}"
                     )
                     continue
+
                 sns.kdeplot(
                     data[parameter],
                     ax=axes[i, j],
                     fill=True,
                     label=f"Лаб. {labs_id[k]}",
+                    bw_adjust=1.0,
                 )
-            axes[i, j].legend(loc="upper right")
+            axes[i, j].legend(loc="upper right", fontsize="small", framealpha=0.5)
     plt.subplots_adjust(hspace=0.5)
     plt.savefig(
         f"./browse_data_images/lab_dist_page_{g + 1}.png", dpi=300, bbox_inches="tight"
