@@ -11,8 +11,9 @@ from keras.api.layers import Input, Dense, Dropout
 from keras.api.models import Model
 from keras.api.utils import set_random_seed
 from keras.api.models import load_model
+from keras.api.callbacks import EarlyStopping, ReduceLROnPlateau
 
-train_model_mode = False  # обучаем модель или загружаем уже обученную
+train_model_mode = True  # обучаем модель или загружаем уже обученную
 # Установим seed для воспроизводимости результатов:
 seed = 42
 np.random.seed(seed)
@@ -84,7 +85,7 @@ for i in range(train_size, data_size):
 # Создадим простую модель нейронной сети:
 input = Input(name="input_1", shape=(12,))
 x = Dense(name="dense_1", units=5, activation="relu")(input)
-x = Dropout(name="dropout_1", rate=0.1)(x)
+# x = Dropout(name="dropout_1", rate=0.1)(x)
 output = Dense(name="dense_2", units=1, activation="sigmoid")(x)
 
 model = Model(inputs=input, outputs=output)
@@ -95,6 +96,27 @@ m = keras.metrics.BinaryAccuracy()
 
 model.compile(optimizer=opt, loss=l, metrics=[m])
 model.summary()
+
+early_stopping = EarlyStopping(
+    monitor="val_loss",
+    min_delta=0,
+    patience=10,
+    verbose=1,
+    mode="auto",
+    restore_best_weights=True,
+    start_from_epoch=0,
+)
+
+reduce_lr = ReduceLROnPlateau(
+    monitor="val_loss",
+    factor=0.1,
+    patience=5,
+    verbose=1,
+    mode="auto",
+    min_delta=0.0001,
+    cooldown=0,
+    min_lr=1e-6,
+)
 
 if train_model_mode:
     # Обучим модель:
@@ -107,9 +129,10 @@ if train_model_mode:
         validation_split=0.2,
         shuffle=True,
         class_weight=None,
+        callbacks=[early_stopping, reduce_lr],
     )
     # Сохраним ее в файл:
-    model.save("saved_models/ferritin-10000.keras")
+    model.save("saved_models/ferritin-10000-2.keras")
     # Визуализируем кривые обучения:
     history_data = history.history
     train_loss = history_data["loss"]
@@ -149,9 +172,11 @@ if train_model_mode:
 
     # Сохраняем график:
     plt.savefig(
-        "images/history_100-epochs_ferritin-10000.png", dpi=300, bbox_inches="tight"
+        "train_images/history_100-epochs_ferritin-10000-2.png",
+        dpi=300,
+        # bbox_inches="tight",
     )
-    plt.show()
+    # plt.show()
 else:
     # Загрузим уже обученную модель:
     model = load_model("saved_models/ferritin-10000.keras")
@@ -248,5 +273,5 @@ plt.ylim([0.0, 1.02])
 plt.plot(fpr, tpr, color="tomato")
 plt.plot([0, 1], [0, 1], color="skyblue", linestyle="--")
 plt.plot([0, 1], [1, 0], color="skyblue", linestyle="--")
-# plt.savefig("images/roc_curve-ferritin-10000.png", dpi=300, bbox_inches="tight")
+plt.savefig("train_images/roc_curve-ferritin-10000-2.png", dpi=300, bbox_inches="tight")
 # plt.show()
