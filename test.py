@@ -66,7 +66,8 @@ axes[0].text(
 axes[0].legend(loc="upper right")
 plt.show()
 
-"""
+
+plt.figure(figsize=(12, 6))
 # Построение box plot
 plt.boxplot(
     df["age"],
@@ -77,5 +78,5 @@ plt.boxplot(
 )
 plt.title("Box Plot для возрастов")
 plt.xlabel("Кол-во лет")
+plt.savefig("./browse_data_images/age_box_plot.png", dpi=300)
 plt.show()
-"""

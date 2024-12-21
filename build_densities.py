@@ -69,6 +69,7 @@ for g in range(len(labels) // 4):
                 lab = f"lab_id{labs_id[k]}"
                 statistic[parameter][lab] = {}
                 data = df[df["lab_id"] == labs_id[k]].filter(items=[parameter])
+                data.dropna(inplace=True, ignore_index=True)
 
                 min_value = float((data[parameter].min()))
                 max_value = float((data[parameter].max()))
