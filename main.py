@@ -13,14 +13,10 @@ from keras.api.models import Model
 from keras.api.utils import set_random_seed
 from keras.api.models import load_model
 from keras.api.callbacks import EarlyStopping, ReduceLROnPlateau
-import random
 
 train_model_mode = True  # обучаем модель или загружаем уже обученную
 # Установим seed для воспроизводимости результатов:
 seed = 42
-random.seed(seed)
-np.random.seed(seed)
-tf.random.set_seed(seed)
 set_random_seed(seed)
 
 # Прочитаем данные:
@@ -35,6 +31,7 @@ y = df.filter(items=targets).to_numpy().flatten().astype("float64")
 
 y = np.array(list(map(lambda x: (1 if x < 15.0 else 0), y)), dtype="int64")
 print(f"Shape of y: {y.shape}")
+print(f"Dtype of y: {y.dtype}")
 print(f"Доля пациентов с низким ферритином: {100 * sum(y) / len(y)}%")
 
 x = df.drop(targets, axis=1).to_numpy()
