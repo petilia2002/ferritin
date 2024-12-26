@@ -63,7 +63,8 @@ def evaluate_model(
     y_train_predict: np.ndarray,
     y_predict: np.ndarray,
     roc_curve_name: str,
-):
+    verbose: bool = False,
+) -> Dict[str, float]:
     # Вычисляем статистику сначала на обучающей выборке для определния оптимального порога:
     fpr, tpr, thresholds = roc_curve(y_train, y_train_predict)
 
@@ -72,29 +73,40 @@ def evaluate_model(
 
     # Вычислим финальную статистику модели:
     ot = find_optimal_threshold(tpr, fpr, thresholds)
-    print(f"Optimal threshold: {ot}")
-
     tp, tn, fp, fn = calculate_confusion_matrix(y_test, y_predict, ot)
 
-    accuracy = (tp + tn) / (tp + tn + fp + fn)
-    sensitivity = tp / (tp + fn)
-    specificity = tn / (tn + fp)
-    f1_score = 2.0 * tp / (2.0 * tp + fp + fn)
-
-    print(f"Statistics:")
-    print(f"TP = {int(tp)}")
-    print(f"TN = {int(tn)}")
-    print(f"FP = {int(fp)}")
-    print(f"FN = {int(fn)}")
-
-    print(f"Accuracy = {accuracy}")
-    print(f"Sensitivity = {sensitivity}")
-    print(f"Specificity = {specificity}")
-    print(f"F1-score = {f1_score}")
+    accuracy = 100.0 * (tp + tn) / (tp + tn + fp + fn)
+    sensitivity = 100.0 * tp / (tp + fn)
+    specificity = 100.0 * tn / (tn + fp)
+    f1_score = 100.0 * 2.0 * tp / (2.0 * tp + fp + fn)
 
     # Построим ROC-кривую:
     fpr, tpr, thresholds = roc_curve(y_test, y_predict)
-    test_auc = auc(fpr, tpr)
-    print(f"AUC = {test_auc}")
-
+    test_auc = 100.0 * auc(fpr, tpr)
     plot_roc_curve(fpr, tpr, filename=roc_curve_name)
+
+    if verbose:
+        print(f"Statistics:")
+        print(f"Optimal threshold: {ot:.2f}")
+        print(f"TP = {int(tp)}")
+        print(f"TN = {int(tn)}")
+        print(f"FP = {int(fp)}")
+        print(f"FN = {int(fn)}")
+        print(f"Accuracy = {accuracy:.2f} %")
+        print(f"Sensitivity = {sensitivity:.2f} %")
+        print(f"Specificity = {specificity:.2f} %")
+        print(f"F1-score = {f1_score:.2f} %")
+        print(f"AUC = {test_auc:.2f} %")
+
+    statistics = {}
+    statistics["ot"] = ot
+    statistics["tp"] = tp
+    statistics["tn"] = tn
+    statistics["fp"] = fp
+    statistics["fn"] = fn
+    statistics["acc"] = accuracy
+    statistics["sen"] = sensitivity
+    statistics["spec"] = specificity
+    statistics["f1"] = f1_score
+    statistics["auc"] = test_auc
+    return statistics
