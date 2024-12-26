@@ -37,6 +37,11 @@ for page in range(pages):
                 mean_value - z_score * std_value,
                 mean_value + z_score * std_value,
             )
+            """
+            q1, q3 = data.quantile(0.25).item(), data.quantile(0.75).item()
+            iqr = q3 - q1
+            low, high = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+            """
             data = data[(data[parameter] >= low) & (data[parameter] <= high)]
             sns.kdeplot(
                 data, ax=axes[i, j], fill=True, label="Плотность", bw_adjust=1.0
