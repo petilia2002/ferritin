@@ -12,7 +12,7 @@ def preparate_data(
 
     y = df.filter(items=targets).to_numpy().flatten().astype("float64")
 
-    y = np.array(list(map(lambda x: (1 if x < 15.0 else 0), y)), dtype="int64")
+    y = np.array(list(map(lambda x: (1 if x < 12.0 else 0), y)), dtype="int64")
     print(f"Shape of y: {y.shape}")
     print(f"Доля пациентов с низким ферритином: {100 * sum(y) / len(y)}%")
 

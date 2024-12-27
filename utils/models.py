@@ -7,7 +7,7 @@ from keras.api.layers import Input, Dense
 from keras.api.models import Model
 
 from utils.callbacks import early_stopping, reduce_lr
-from utils.plots import plot_roc_curve, plot_loss
+from utils.plots import plot_roc_curve
 from utils.statistic import find_optimal_threshold, calculate_confusion_matrix
 
 
