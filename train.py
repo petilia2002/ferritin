@@ -1,6 +1,5 @@
 import pandas as pd
 from keras.api.utils import set_random_seed
-from keras.api.models import load_model
 import json
 import random
 
@@ -13,7 +12,7 @@ repeats = 3  # кол-во повторений обучения
 seeds = [random.randint(0, 2**32 - 1) for _ in range(repeats)]
 
 # Прочитаем данные:
-df = pd.read_csv("data/ferritin.csv", sep=",")
+df = pd.read_csv("./data/ferritin-72k.csv", sep=",", dtype={"hgb": float})
 print(df.head())
 print(df.shape)
 print(df.dtypes)
@@ -33,10 +32,10 @@ for i in range(repeats):
         y_train,
         class_weight,
         isSave=True,
-        filename="ferritin-10000",
+        filename="ferritin-10000-3",
     )
     # Визуализируем кривые обучения:
-    plot_loss(history_data, f"history_100-epochs_ferritin-10000")
+    plot_loss(history_data, f"history_100-epochs_ferritin-10000-3")
 
     y_train_predict = model.predict(x_train)
     y_predict = model.predict(x_test)
@@ -48,7 +47,7 @@ for i in range(repeats):
         y_test,
         y_train_predict,
         y_predict,
-        "roc_curve-ferritin-10000",
+        "roc_curve-ferritin-10000-3",
         False,
     )
     list_statistics.append(statistics)

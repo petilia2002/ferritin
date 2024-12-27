@@ -57,7 +57,7 @@ for g in range(len(labels) // 4):
     fig, axes = plt.subplots(rows, cols, figsize=(12, 6))
     for i in range(rows):
         for j in range(cols):
-            parameter = labels[g * (rows + cols) + i * rows + j]
+            parameter = labels[g * rows * cols + i * cols + j]
             axes[i, j].set_title(
                 f"Распределение показателя {parameter} по лабораториям", pad=10
             )

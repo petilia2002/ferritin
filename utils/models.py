@@ -3,7 +3,7 @@ import os
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
-from keras.api.layers import Input, Dense
+from keras.api.layers import Input, Dense, Dropout
 from keras.api.models import Model
 
 from utils.callbacks import early_stopping, reduce_lr
@@ -13,8 +13,8 @@ from utils.statistic import find_optimal_threshold, calculate_confusion_matrix
 
 def create_model() -> Model:
     input = Input(name="input_1", shape=(12,))
-    x = Dense(name="dense_1", units=5, activation="relu")(input)
-    # x = Dropout(name="dropout_1", rate=0.1)(x)
+    x = Dense(name="dense_1", units=50, activation="relu")(input)
+    # x = Dropout(name="dropout_1", rate=0.2)(x)
     output = Dense(name="dense_2", units=1, activation="sigmoid")(x)
 
     model = Model(inputs=input, outputs=output)
