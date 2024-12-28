@@ -1,5 +1,6 @@
 from typing import Tuple
 import numpy as np
+from scipy.stats import gaussian_kde
 
 
 def find_optimal_threshold(
@@ -44,3 +45,53 @@ def calculate_confusion_matrix(
             fn += 1
 
     return tp, tn, fp, fn
+
+
+def find_confidence_interval(
+    x: np.ndarray, bw_adjust: float
+) -> Tuple[float, float, float, float]:
+    x = x[~np.isnan(x) & ~np.isinf(x)]
+    kde = gaussian_kde(x, bw_method="scott")
+    kde.set_bandwidth(kde.factor * bw_adjust)
+
+    # Численно интегрируем кривую плотности:
+    S = kde.integrate_box_1d(-np.inf, np.inf)  # должно получиться 1.0
+    print(f"S = {S:.4f}")
+
+    # Находим максимум по Y:
+    a, b = np.min(x), np.max(x)
+    print(a, b)
+    x_vals = np.linspace(a, b, 500)
+    y_vals = kde(x_vals)
+
+    max_density = np.max(y_vals)
+    print(f"Max Y = {max_density:.4f}")
+
+    max_indexes = np.where(y_vals == max_density)[0]
+    print(max_indexes)
+
+    max_density_point = x_vals[max_indexes]
+    print(max_density_point)
+
+    max_density_point = np.sum(max_density_point) / max_density_point.size
+
+    # Начинаем поиск доверительного интервала:
+    x1 = x2 = max_density_point
+    dx = 0.05 * (np.max(x) - np.min(x))
+    P = 0.95
+    p = 0
+    while p / S < P:
+        a, b = x1 - dx, x2 + dx
+        left_area = kde.integrate_box_1d(a, x1)
+        right_area = kde.integrate_box_1d(x2, b)
+        if left_area > right_area:
+            x1 = a
+            p += left_area
+        elif left_area < right_area:
+            x2 = b
+            p += right_area
+        else:
+            x1, x2 = a, b
+            p = p + left_area + right_area
+
+    return x1, x2, max_density, max_density_point
