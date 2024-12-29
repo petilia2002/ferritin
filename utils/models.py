@@ -11,9 +11,9 @@ from utils.plots import plot_roc_curve
 from utils.statistic import find_optimal_threshold, calculate_confusion_matrix
 
 
-def create_model() -> Model:
+def create_model(hidden_units: int) -> Model:
     input = Input(name="input_1", shape=(12,))
-    x = Dense(name="dense_1", units=50, activation="relu")(input)
+    x = Dense(name="dense_1", units=hidden_units, activation="relu")(input)
     # x = Dropout(name="dropout_1", rate=0.2)(x)
     output = Dense(name="dense_2", units=1, activation="sigmoid")(x)
 
