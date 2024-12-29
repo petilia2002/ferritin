@@ -77,21 +77,21 @@ def find_confidence_interval(
 
     # Начинаем поиск доверительного интервала:
     x1 = x2 = max_density_point
-    dx = 0.05 * (np.max(x) - np.min(x))
+    dx = 0.005 * max_density_point
     P = 0.95
-    p = 0
+    p, eps = 0, -0.05
     while p / S < P:
         a, b = x1 - dx, x2 + dx
         left_area = kde.integrate_box_1d(a, x1)
         right_area = kde.integrate_box_1d(x2, b)
-        if left_area > right_area:
+        if left_area > right_area and a > eps:
             x1 = a
             p += left_area
-        elif left_area < right_area:
-            x2 = b
-            p += right_area
-        else:
+        elif left_area == right_area and a > eps:
             x1, x2 = a, b
             p = p + left_area + right_area
+        else:
+            x2 = b
+            p += right_area
 
     return x1, x2, max_density, max_density_point
