@@ -1,6 +1,6 @@
 import pandas as pd
-from keras.api.utils import set_random_seed
-from keras.api.models import load_model
+from keras.utils import set_random_seed
+from keras.models import load_model
 
 from utils.models import evaluate_model
 from utils.processing import preparate_data

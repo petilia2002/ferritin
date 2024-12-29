@@ -3,8 +3,8 @@ import os
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
-from keras.api.layers import Input, Dense, Dropout
-from keras.api.models import Model
+from keras.layers import Input, Dense, Dropout
+from keras.models import Model
 
 from utils.callbacks import early_stopping, reduce_lr
 from utils.plots import plot_roc_curve

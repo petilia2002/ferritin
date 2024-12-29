@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-from keras.api.utils import set_random_seed
+from keras.utils import set_random_seed
 import random
 from utils.plots import plot_loss
 from utils.models import create_model, train_model, evaluate_model
@@ -15,8 +15,8 @@ print(df.head())
 print(df.shape)
 print(df.dtypes)
 
-list_of_units = [u for u in range(5, 105, 5)]
-# list_of_units = [5, 10]
+# list_of_units = [u for u in range(5, 105, 5)]
+list_of_units = [5, 10]
 metrics_by_units = []
 
 for u in list_of_units:

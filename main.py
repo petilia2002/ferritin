@@ -8,11 +8,11 @@ from sklearn.utils import shuffle
 from sklearn.metrics import roc_curve, auc
 import tensorflow as tf
 import keras
-from keras.api.layers import Input, Dense, Dropout
-from keras.api.models import Model
-from keras.api.utils import set_random_seed
-from keras.api.models import load_model
-from keras.api.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.layers import Input, Dense, Dropout
+from keras.models import Model
+from keras.utils import set_random_seed
+from keras.models import load_model
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 train_model_mode = True  # обучаем модель или загружаем уже обученную
 # Установим seed для воспроизводимости результатов:
@@ -133,7 +133,7 @@ if train_model_mode:
         callbacks=[early_stopping, reduce_lr],
     )
     # Сохраним ее в файл:
-    model.save("saved_models/ferritin-10000-2.keras")
+    model.save("saved_models/ferritin-10000.keras")
     # Визуализируем кривые обучения:
     history_data = history.history
     train_loss = history_data["loss"]
@@ -173,7 +173,7 @@ if train_model_mode:
 
     # Сохраняем график:
     plt.savefig(
-        "train_images/history_100-epochs_ferritin-10000-2.png",
+        "train_images/history_100-epochs_ferritin-10000.png",
         dpi=300,
         # bbox_inches="tight",
     )
@@ -274,5 +274,5 @@ plt.ylim([0.0, 1.02])
 plt.plot(fpr, tpr, color="tomato")
 plt.plot([0, 1], [0, 1], color="skyblue", linestyle="--")
 plt.plot([0, 1], [1, 0], color="skyblue", linestyle="--")
-plt.savefig("train_images/roc_curve-ferritin-10000-2.png", dpi=300, bbox_inches="tight")
+plt.savefig("train_images/roc_curve-ferritin-10000.png", dpi=300, bbox_inches="tight")
 # plt.show()

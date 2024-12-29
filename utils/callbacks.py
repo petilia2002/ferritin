@@ -1,4 +1,4 @@
-from keras.api.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 early_stopping = EarlyStopping(
     monitor="val_loss",
