@@ -25,7 +25,7 @@ for i in range(repeats):
     class_weight, x_train, y_train, x_test, y_test = preparate_data(
         df, targets, seeds[i]
     )
-    model = create_model(5)
+    model = create_model(20)
     history_data = train_model(
         model,
         x_train,
