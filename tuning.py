@@ -15,8 +15,8 @@ print(df.head())
 print(df.shape)
 print(df.dtypes)
 
-# list_of_units = [u for u in range(5, 105, 5)]
-list_of_units = [5, 10]
+list_of_units = [u for u in range(5, 105, 5)]
+# list_of_units = [5, 10]
 metrics_by_units = []
 
 for u in list_of_units:
