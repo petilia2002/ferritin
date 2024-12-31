@@ -18,6 +18,7 @@ print(df.shape)
 print(df.dtypes)
 
 targets = ["ferritin"]
+hidden_units = 5
 
 list_statistics = []
 for i in range(repeats):
@@ -25,7 +26,7 @@ for i in range(repeats):
     class_weight, x_train, y_train, x_test, y_test = preparate_data(
         df, targets, seeds[i]
     )
-    model = create_model(20)
+    model = create_model(hidden_units)
     history_data = train_model(
         model,
         x_train,

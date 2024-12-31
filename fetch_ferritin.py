@@ -8,17 +8,13 @@ config_object.read("./config.ini")
 user_info = config_object["USERINFO"]
 server_config = config_object["SERVERCONFIG"]
 
-host = server_config["host"]
-database = server_config["database"]
+dsn = server_config["dsn"]
 charset = server_config["charset"]
 user = user_info["user"]
 password = user_info["password"]
 
-connection = fdb.connect(
-    host=host, database=database, user=user, password=password, charset=charset
-)
-
-print(f"Successfully connected to {database} database")
+connection = fdb.connect(dsn=dsn, user=user, password=password, charset=charset)
+print(f"Successfully connected to {dsn} database")
 
 rows_count = 10000
 select = f"select * from lab where lab.ferritin > 0 rows {rows_count}"
@@ -88,6 +84,6 @@ print(df.head())
 print(df.shape)
 print(df.dtypes)
 
-df.to_csv("data/ferritin.csv", sep=",", index=False)
+# df.to_csv("data/ferritin.csv", sep=",", index=False)
 connection.close()
-print(f"Closed {database} database")
+print(f"Closed {dsn} database")

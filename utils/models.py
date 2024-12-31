@@ -1,10 +1,15 @@
 from typing import Dict, List
 import os
+import sys
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
 from keras.layers import Input, Dense, Dropout
 from keras.models import Model
+from keras.utils import plot_model
+
+# Добавляем корневую папку проекта в sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from utils.callbacks import early_stopping, reduce_lr
 from utils.plots import plot_roc_curve
@@ -12,10 +17,14 @@ from utils.statistic import find_optimal_threshold, calculate_confusion_matrix
 
 
 def create_model(hidden_units: int) -> Model:
-    input = Input(name="input_1", shape=(12,))
-    x = Dense(name="dense_1", units=hidden_units, activation="relu")(input)
-    # x = Dropout(name="dropout_1", rate=0.2)(x)
-    output = Dense(name="dense_2", units=1, activation="sigmoid")(x)
+    input = Input(shape=(12,))
+    x = Dense(units=50, activation="relu")(input)
+    x = Dropout(rate=0.2)(x)
+    x = Dense(units=25, activation="relu")(x)
+    x = Dropout(rate=0.2)(x)
+    x = Dense(units=10, activation="relu")(x)
+    x = Dropout(rate=0.1)(x)
+    output = Dense(units=1, activation="sigmoid")(x)
 
     model = Model(inputs=input, outputs=output)
 
@@ -24,6 +33,20 @@ def create_model(hidden_units: int) -> Model:
     m = keras.metrics.BinaryAccuracy()
 
     model.compile(optimizer=opt, loss=l, metrics=[m])
+
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(script_dir, "../model_images")
+    path = os.path.join(output_dir, f"model.png")
+    plot_model(
+        model=model,
+        to_file=path,
+        show_shapes=True,
+        show_dtype=True,
+        show_layer_names=True,
+        show_layer_activations=True,
+        show_trainable=True,
+        rankdir="TB",
+    )
     model.summary()
 
     return model
@@ -110,3 +133,6 @@ def evaluate_model(
     statistics["f1"] = f1_score
     statistics["auc"] = test_auc
     return statistics
+
+
+create_model(None)
