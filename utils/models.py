@@ -18,7 +18,7 @@ from utils.statistic import find_optimal_threshold, calculate_confusion_matrix
 
 def create_model(hidden_units: int) -> Model:
     input = Input(shape=(12,))
-    x = Dense(units=5, activation="relu")(input)
+    x = Dense(units=hidden_units, activation="relu")(input)
     """
     x = Dropout(rate=0.2)(x)
     x = Dense(units=25, activation="relu")(x)

@@ -2,7 +2,7 @@ import json
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-with open("./output/metrics_by_units.json", "r", encoding="utf-8") as file:
+with open("./output/metrics_by_units_12_launches.json", "r", encoding="utf-8") as file:
     metrics_by_units = json.load(file)
 
 print(metrics_by_units)
@@ -39,8 +39,8 @@ for i in range(rows):
             linestyle="--",
             label=f"{metric_name}",
         )
-        axes[i, j].legend(loc="upper right", fontsize="small", framealpha=0.5)
+        axes[i, j].legend(loc="lower right", fontsize="small", framealpha=0.5)
         axes[i, j].grid(visible=True)
 
 plt.subplots_adjust(hspace=0.5)
-plt.savefig("./train_images/tuning_results/result_5-10_units", dpi=300)
+plt.savefig("./train_images/tuning_results/result_by_units_12_launches.png", dpi=300)

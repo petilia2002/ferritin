@@ -7,7 +7,7 @@ from utils.plots import plot_loss
 from utils.models import create_model, train_model, evaluate_model
 from utils.processing import preparate_data
 
-repeats = 3  # кол-во повторений обучения
+repeats = 10  # кол-во повторений обучения
 # Установим seed для воспроизводимости результатов:
 seeds = [random.randint(0, 2**32 - 1) for _ in range(repeats)]
 
@@ -66,5 +66,5 @@ for key in list_statistics[0].keys():
     avg_statistics[field_name] = avg
     avg_statistics[f"list_{key}"] = results
 
-with open("./output/results.json", "w") as file:
+with open("./output/results_30_units_10_launches.json", "w") as file:
     json.dump(avg_statistics, file, ensure_ascii=False, indent=4)

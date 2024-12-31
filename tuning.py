@@ -7,7 +7,7 @@ from utils.models import create_model, train_model, evaluate_model
 from utils.processing import preparate_data
 
 targets = ["ferritin"]  # целевой показатель
-repeats = 3  # кол-во повторений обучения
+repeats = 12  # кол-во повторений обучения
 
 # Прочитаем данные:
 df = pd.read_csv("./data/ferritin-v2.csv", sep=",", dtype={"hgb": float})
@@ -77,5 +77,5 @@ for u in list_of_units:
 
     metrics_by_units.append(metrics)
 
-with open("./output/metrics_by_units.json", "w") as file:
+with open("./output/metrics_by_units_10_launches.json", "w") as file:
     json.dump(metrics_by_units, file, ensure_ascii=False, indent=4)
