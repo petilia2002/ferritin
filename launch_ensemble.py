@@ -13,8 +13,8 @@ print(df.shape)
 print(df.dtypes)
 
 targets = ["ferritin"]
-k = 10
-hidden_units = 90
+k = 100
+hidden_units = 50
 
 # set_random_seed(seed=42)
 class_weight, x_train, y_train, x_test, y_test = preparate_data(df, targets, seed=42)
