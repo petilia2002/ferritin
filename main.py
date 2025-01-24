@@ -20,7 +20,7 @@ seed = 42
 set_random_seed(seed)
 
 # Прочитаем данные:
-df = pd.read_csv("data/ferritin.csv", sep=",")
+df = pd.read_csv("data/ferritin-10000.csv", sep=",")
 
 print(df.head())
 print(df.shape)
@@ -29,7 +29,7 @@ print(df.dtypes)
 targets = ["ferritin"]
 y = df.filter(items=targets).to_numpy().flatten().astype("float64")
 
-y = np.array(list(map(lambda x: (1 if x < 15.0 else 0), y)), dtype="int64")
+y = np.array(list(map(lambda x: (1 if x < 12.0 else 0), y)), dtype="int64")
 print(f"Shape of y: {y.shape}")
 print(f"Dtype of y: {y.dtype}")
 print(f"Доля пациентов с низким ферритином: {100 * sum(y) / len(y)}%")

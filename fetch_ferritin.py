@@ -84,6 +84,6 @@ print(df.head())
 print(df.shape)
 print(df.dtypes)
 
-# df.to_csv("data/ferritin.csv", sep=",", index=False)
+df.to_csv("data/ferritin.csv", sep=",", index=False)
 connection.close()
 print(f"Closed {dsn} database")
