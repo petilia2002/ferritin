@@ -13,8 +13,8 @@ print(df.shape)
 print(df.dtypes)
 
 targets = ["ferritin"]
-k = [100]
-hidden_units = [10, 20, 30, 40, 50, 60, 70, 80, 90]
+k = [10, 32, 50, 75]
+hidden_units = [10, 30, 50, 75, 90]
 list_statistics = []
 
 for _k in k:
@@ -53,5 +53,5 @@ for _k in k:
         s["AUC"] = statistics["auc"]
         list_statistics.append(s)
 
-with open(f"./output/ensembles/tuning_ensembles_k-100.json", "w") as file:
+with open(f"./output/mini_ensembles/tuning_results.json", "w") as file:
     json.dump(list_statistics, file, ensure_ascii=False, indent=4)

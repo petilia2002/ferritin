@@ -58,7 +58,6 @@ class BatchEnsembleLayer(Layer):
     def __init__(
         self,
         k: int = 32,
-        n_features: int = 12,
         units: int = 5,
         last_layer: bool = False,
         random_signs: bool = False,
@@ -67,7 +66,6 @@ class BatchEnsembleLayer(Layer):
         super().__init__()
         self.units = units
         self.k = k
-        self.n_features = n_features
         self.last_layer = last_layer
         self.seed = seed
         self.initializer = (
@@ -90,7 +88,7 @@ class BatchEnsembleLayer(Layer):
             name="bias",
         )
         self.r = self.add_weight(
-            (self.k, 1, self.n_features),
+            (self.k, 1, input_shape[-1]),
             initializer=self.initializer,
             trainable=True,
             name="r",
@@ -123,7 +121,6 @@ class MiniEnsembleLayer(Layer):
     def __init__(
         self,
         k: int = 32,
-        n_features: int = 12,
         units: int = 5,
         use_r: bool = True,
         use_s: bool = False,
@@ -133,7 +130,6 @@ class MiniEnsembleLayer(Layer):
     ):
         super().__init__()
         self.k = k
-        self.n_features = n_features
         self.units = units
         self.use_r = use_r
         self.use_s = use_s
@@ -160,7 +156,7 @@ class MiniEnsembleLayer(Layer):
         )
         self.r = (
             self.add_weight(
-                (self.k, 1, self.n_features),
+                (self.k, 1, input_shape[-1]),
                 initializer=self.initializer,
                 trainable=True,
                 name="r",

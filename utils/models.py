@@ -58,11 +58,49 @@ def create_model(hidden_units: int) -> Model:
     return model
 
 
-def create_ensemble(k: int = 3, hidden_units: int = 5) -> Model:
+def create_ensemble(
+    k: int = 3, hidden_units: int = 5, bins: list[np.ndarray] = [], d_embedding: int = 4
+) -> Model:
     input = Input(shape=(12,))
     x = RepeatVector(k)(input)
-    x = DeepEnsembleLayer(k=k, units=hidden_units, last_layer=False, seed=None)(x)
-    output = DeepEnsembleLayer(k=k, units=1, last_layer=True, seed=None)(x)
+    # x = DeepEnsembleLayer(k=k, units=hidden_units, last_layer=False, seed=None)(x)
+    # output = DeepEnsembleLayer(k=k, units=1, last_layer=True, seed=None)(x)
+
+    x = BatchEnsembleLayer(
+        k=k,
+        units=hidden_units,
+        last_layer=False,
+        random_signs=False,
+        seed=None,
+    )(x)
+    output = BatchEnsembleLayer(
+        k=k,
+        units=1,
+        last_layer=True,
+        random_signs=False,
+        seed=None,
+    )(x)
+
+    """
+    x = MiniEnsembleLayer(
+        k=k,
+        units=hidden_units,
+        use_r=True,
+        use_s=False,
+        last_layer=False,
+        random_signs=False,
+        seed=None,
+    )(x)
+    output = MiniEnsembleLayer(
+        k=k,
+        units=1,
+        use_r=True,
+        use_s=False,
+        last_layer=True,
+        random_signs=False,
+        seed=None,
+    )(x)
+    """
     model = Model(inputs=input, outputs=output)
 
     opt = keras.optimizers.Adam(learning_rate=0.001)
