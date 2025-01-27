@@ -66,5 +66,5 @@ for key in list_statistics[0].keys():
     avg_statistics[field_name] = avg
     avg_statistics[f"list_{key}"] = results
 
-with open("./output/single_unit_results.json", "w") as file:
+with open("./output/high_lr_results.json", "w") as file:
     json.dump(avg_statistics, file, ensure_ascii=False, indent=4)

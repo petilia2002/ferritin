@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
-from keras.layers import Input, Dense, Dropout, RepeatVector
+from keras.layers import Input, Dense, Dropout, RepeatVector, Flatten
 from keras.models import Model
 from keras.utils import plot_model
 
@@ -22,7 +22,7 @@ from package.ensembles import *
 
 def create_model(hidden_units: int) -> Model:
     input = Input(shape=(12,))
-    # x = Dense(units=hidden_units, activation="relu")(input)
+    x = Dense(units=hidden_units, activation="relu")(input)
     """
     x = Dropout(rate=0.2)(x)
     x = Dense(units=25, activation="relu")(x)
@@ -30,7 +30,7 @@ def create_model(hidden_units: int) -> Model:
     x = Dense(units=10, activation="relu")(x)
     x = Dropout(rate=0.1)(x)
     """
-    output = Dense(units=1, activation="sigmoid")(input)
+    output = Dense(units=1, activation="sigmoid")(x)
 
     model = Model(inputs=input, outputs=output)
 
@@ -58,9 +58,7 @@ def create_model(hidden_units: int) -> Model:
     return model
 
 
-def create_ensemble(
-    k: int = 3, hidden_units: int = 5, bins: list[np.ndarray] = [], d_embedding: int = 4
-) -> Model:
+def create_ensemble(k: int = 3, hidden_units: int = 5):
     input = Input(shape=(12,))
     x = RepeatVector(k)(input)
     # x = DeepEnsembleLayer(k=k, units=hidden_units, last_layer=False, seed=None)(x)
@@ -112,6 +110,45 @@ def create_ensemble(
     return model
 
 
+def create_ensemble_with_ple(
+    k: int = 3, hidden_units: int = 5, bins: list[np.ndarray] = [], d_embedding: int = 4
+) -> Model:
+    input = Input(shape=(12,))
+    x = PiecewiseLinearTrainableEmbeddings(
+        bins=bins,
+        d_embedding=d_embedding,
+        linear=True,
+        linear_activation=True,
+        activation=True,
+    )(input)
+    x = Flatten()(x)
+    x = RepeatVector(k)(x)
+    x = BatchEnsembleLayer(
+        k=k,
+        units=hidden_units,
+        last_layer=False,
+        random_signs=False,
+        seed=None,
+    )(x)
+    output = BatchEnsembleLayer(
+        k=k,
+        units=1,
+        last_layer=True,
+        random_signs=False,
+        seed=None,
+    )(x)
+
+    model = Model(inputs=input, outputs=output)
+
+    opt = keras.optimizers.Adam(learning_rate=0.001)
+    l = keras.losses.BinaryCrossentropy()
+    m = keras.metrics.BinaryAccuracy()
+
+    model.compile(optimizer=opt, loss=l, metrics=[m])
+    model.summary()
+    return model
+
+
 def train_model(
     model: Model,
     x_train: np.ndarray,
@@ -124,14 +161,13 @@ def train_model(
         x=x_train,
         y=y_train,
         batch_size=250,
-        epochs=100,
+        epochs=200,
         verbose=2,
         validation_split=0.2,
         shuffle=True,
         class_weight=class_weight,
         # callbacks=[early_stopping, reduce_lr],
     )
-
     if isSave:
         script_dir = os.path.dirname(os.path.abspath(__file__))
         output_dir = os.path.join(script_dir, "../saved_models")
