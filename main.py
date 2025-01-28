@@ -83,6 +83,8 @@ for i in range(train_size, data_size):
     y_test[j] = y[inds[i]]
     j += 1
 
+print(x_train)
+
 # Создадим простую модель нейронной сети:
 input = Input(name="input_1", shape=(12,))
 x = Dense(name="dense_1", units=5, activation="relu")(input)

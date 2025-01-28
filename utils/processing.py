@@ -7,7 +7,7 @@ from sklearn.utils import shuffle
 
 
 def preparate_data(
-    df: pd.DataFrame, targets: List[str], seed: int = 42
+    df: pd.DataFrame, targets: List[str], scale: bool = True, seed: int = 42
 ) -> Tuple[Dict[int, float], np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
     y = df.filter(items=targets).to_numpy().flatten().astype("float64")
@@ -29,10 +29,12 @@ def preparate_data(
     )
     print(f"Веса классов: {class_weight}")
 
+    x_scaled = x
     # Масштабируем данные:
-    scaler = MinMaxScaler(feature_range=(0, 1))
-    x_scaled = scaler.fit_transform(x)
-    print(f"Shape of scaled x: {x_scaled.shape}")
+    if scale:
+        scaler = MinMaxScaler(feature_range=(0, 1))
+        x_scaled = scaler.fit_transform(x)
+        print(f"Shape of scaled x: {x_scaled.shape}")
     data_size = x_scaled.shape[0]
     print(f"Размер всех данных: {data_size}")
 

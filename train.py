@@ -1,3 +1,7 @@
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 import pandas as pd
 from keras.utils import set_random_seed
 import json
@@ -31,6 +35,8 @@ for i in range(repeats):
         model,
         x_train,
         y_train,
+        x_test,
+        y_test,
         class_weight,
         isSave=True,
         filename="ferritin-v2",

@@ -13,8 +13,8 @@ early_stopping = EarlyStopping(
 
 reduce_lr = ReduceLROnPlateau(
     monitor="val_loss",
-    factor=0.8,
-    patience=10,
+    factor=0.9,
+    patience=20,
     verbose=1,
     mode="auto",
     min_delta=0.0001,

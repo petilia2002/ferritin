@@ -22,10 +22,12 @@ print(df.dtypes)
 targets = ["ferritin"]
 
 k = 32
-hidden_units = 90
+hidden_units = 30
 
 # set_random_seed(seed=42)
-class_weight, x_train, y_train, x_test, y_test = preparate_data(df, targets, seed=None)
+class_weight, x_train, y_train, x_test, y_test = preparate_data(
+    df, targets, scale=False, seed=None
+)
 model = create_ensemble(k=k, hidden_units=hidden_units)
 history_data = train_model(
     model,
@@ -53,7 +55,7 @@ statistics = evaluate_model(
 )
 
 with open(
-    f"./output/ensembles/k-{k}_units-{hidden_units}-200epochs-2.json",
+    f"./output/ensembles/k-{k}_units-{hidden_units}.json",
     "w",
 ) as file:
     json.dump(statistics, file, ensure_ascii=False, indent=4)

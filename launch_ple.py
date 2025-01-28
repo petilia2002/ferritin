@@ -1,3 +1,7 @@
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 import pandas as pd
 from keras.utils import set_random_seed
 import json
@@ -22,12 +26,14 @@ print(df.dtypes)
 targets = ["ferritin"]
 
 k = 32
-hidden_units = 90
+hidden_units = 30
 n_bins = 10
-d_embedding = 30
+d_embedding = 5
 
 # set_random_seed(seed=42)
-class_weight, x_train, y_train, x_test, y_test = preparate_data(df, targets, seed=None)
+class_weight, x_train, y_train, x_test, y_test = preparate_data(
+    df, targets, scale=False, seed=None
+)
 bins = compute_bins(x_train, n_bins=n_bins)
 model = create_ensemble_with_ple(
     k=k, hidden_units=hidden_units, bins=bins, d_embedding=d_embedding
@@ -37,6 +43,8 @@ history_data = train_model(
     model,
     x_train,
     y_train,
+    x_test,
+    y_test,
     class_weight,
     isSave=False,
     filename="ferritin-v2-ple",

@@ -114,6 +114,7 @@ def create_ensemble_with_ple(
     k: int = 3, hidden_units: int = 5, bins: list[np.ndarray] = [], d_embedding: int = 4
 ) -> Model:
     input = Input(shape=(12,))
+    """
     x = PiecewiseLinearTrainableEmbeddings(
         bins=bins,
         d_embedding=d_embedding,
@@ -122,6 +123,10 @@ def create_ensemble_with_ple(
         activation=True,
     )(input)
     x = Flatten()(x)
+    """
+    x = PiecewiseLinearEmbeddings(bins=bins)(input)
+    output = Dense(50)(x)
+    """
     x = RepeatVector(k)(x)
     x = BatchEnsembleLayer(
         k=k,
@@ -137,7 +142,7 @@ def create_ensemble_with_ple(
         random_signs=False,
         seed=None,
     )(x)
-
+    """
     model = Model(inputs=input, outputs=output)
 
     opt = keras.optimizers.Adam(learning_rate=0.001)
@@ -153,6 +158,8 @@ def train_model(
     model: Model,
     x_train: np.ndarray,
     y_train: np.ndarray,
+    x_test: np.ndarray,
+    y_test: np.ndarray,
     class_weight: Dict[int, float],
     isSave: bool,
     filename: str = "",
@@ -161,12 +168,13 @@ def train_model(
         x=x_train,
         y=y_train,
         batch_size=250,
-        epochs=200,
+        epochs=100,
         verbose=2,
         validation_split=0.2,
+        # validation_data=(x_test, y_test),
         shuffle=True,
         class_weight=class_weight,
-        # callbacks=[early_stopping, reduce_lr],
+        callbacks=[early_stopping, reduce_lr],
     )
     if isSave:
         script_dir = os.path.dirname(os.path.abspath(__file__))
