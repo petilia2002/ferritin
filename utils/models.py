@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
-from keras.layers import Input, Dense, Dropout, RepeatVector, Flatten
+from keras.layers import Input, Dense, Dropout, RepeatVector, Flatten, Layer
 from keras.models import Model
 from keras.utils import plot_model
 
@@ -111,22 +111,24 @@ def create_ensemble(k: int = 3, hidden_units: int = 5):
 
 
 def create_ensemble_with_ple(
-    k: int = 3, hidden_units: int = 5, bins: list[np.ndarray] = [], d_embedding: int = 4
+    n_features: int = 12,
+    k: int = 3,
+    hidden_units: int = 5,
+    bins: list[np.ndarray] = [],
+    d_embedding: int = 4,
 ) -> Model:
-    input = Input(shape=(12,))
-    """
-    x = PiecewiseLinearTrainableEmbeddings(
-        bins=bins,
-        d_embedding=d_embedding,
-        linear=True,
-        linear_activation=True,
-        activation=True,
-    )(input)
-    x = Flatten()(x)
-    """
+    input = Input(shape=(n_features,))
+
+    # x = PiecewiseLinearTrainableEmbeddings(
+    #     bins=bins,
+    #     d_embedding=d_embedding,
+    #     linear=True,
+    #     linear_activation=True,
+    #     activation=True,
+    # )(input)
+    # x = Flatten()(x)
+
     x = PiecewiseLinearEmbeddings(bins=bins)(input)
-    output = Dense(50)(x)
-    """
     x = RepeatVector(k)(x)
     x = BatchEnsembleLayer(
         k=k,
@@ -142,7 +144,7 @@ def create_ensemble_with_ple(
         random_signs=False,
         seed=None,
     )(x)
-    """
+
     model = Model(inputs=input, outputs=output)
 
     opt = keras.optimizers.Adam(learning_rate=0.001)

@@ -132,15 +132,22 @@ class PiecewiseLinearEmbeddings(Layer):
     def __init__(self, bins: list[np.ndarray]):
         super().__init__()
         self.ple_enc = PiecewiseLinearEncoding(bins=bins)
+        self.mask = (
+            None
+            if self.ple_enc.dif_mask is None
+            else tf.reshape(self.ple_enc.dif_mask, [-1])
+        )
+        self.indices = (
+            None if self.mask is None else tf.reshape(tf.where(self.mask), shape=[-1])
+        )
 
     def call(self, inputs):
         x = self.ple_enc(inputs)
-        out = (
-            ops.reshape(x, (x.shape[0], -1))
-            if self.ple_enc.dif_mask is None
-            else tf.boolean_mask(x, self.ple_enc.dif_mask, axis=1)
-        )
-        return out
+        x = tf.reshape(x, shape=[tf.shape(x)[0], -1])
+        if self.mask is not None:
+            x = tf.gather(x, self.indices, axis=1)
+            x = tf.ensure_shape(x, [None, len(self.indices)])
+        return x
 
 
 class PiecewiseLinearTrainableEmbeddings(Layer):

@@ -7,7 +7,11 @@ from sklearn.utils import shuffle
 
 
 def preparate_data(
-    df: pd.DataFrame, targets: List[str], scale: bool = True, seed: int = 42
+    df: pd.DataFrame,
+    n_features: int,
+    targets: List[str],
+    scale: bool = True,
+    seed: int = 42,
 ) -> Tuple[Dict[int, float], np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
     y = df.filter(items=targets).to_numpy().flatten().astype("float64")
@@ -42,8 +46,8 @@ def preparate_data(
     train_size = int(data_size * 0.8)
     test_size = data_size - train_size
 
-    x_train = np.zeros((train_size, 12), dtype=float)
-    x_test = np.zeros((test_size, 12), dtype=float)
+    x_train = np.zeros((train_size, n_features), dtype=float)
+    x_test = np.zeros((test_size, n_features), dtype=float)
 
     y_train = np.zeros((train_size, 1), dtype=float)
     y_test = np.zeros((test_size, 1), dtype=float)
