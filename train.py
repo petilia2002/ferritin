@@ -11,7 +11,7 @@ from utils.plots import plot_loss
 from utils.models import create_model, train_model, evaluate_model
 from utils.processing import preparate_data
 
-repeats = 3  # кол-во повторений обучения
+repeats = 12  # кол-во повторений обучения
 # Установим seed для воспроизводимости результатов:
 seeds = [random.randint(0, 2**32 - 1) for _ in range(repeats)]
 
@@ -22,13 +22,16 @@ print(df.shape)
 print(df.dtypes)
 
 targets = ["ferritin"]
-hidden_units = 5
+n_features = len(df.columns) - len(targets)
+print(f"{n_features=}")
+
+hidden_units = 2048
 
 list_statistics = []
 for i in range(repeats):
     # set_random_seed(seeds[i])
     class_weight, x_train, y_train, x_test, y_test = preparate_data(
-        df, targets, seed=None
+        df, n_features, targets, scale=True, seed=None
     )
     model = create_model(hidden_units)
     history_data = train_model(
@@ -72,5 +75,7 @@ for key in list_statistics[0].keys():
     avg_statistics[field_name] = avg
     avg_statistics[f"list_{key}"] = results
 
-with open("./output/high_lr_results.json", "w") as file:
+with open(
+    f"./output/base_model/res-{hidden_units}-units_{repeats}-launches.json", "w"
+) as file:
     json.dump(avg_statistics, file, ensure_ascii=False, indent=4)

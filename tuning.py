@@ -7,7 +7,7 @@ from utils.models import create_model, train_model, evaluate_model
 from utils.processing import preparate_data
 
 targets = ["ferritin"]  # целевой показатель
-repeats = 12  # кол-во повторений обучения
+repeats = 3  # кол-во повторений обучения
 
 # Прочитаем данные:
 df = pd.read_csv("./data/ferritin-v2.csv", sep=",", dtype={"hgb": float})
@@ -15,23 +15,28 @@ print(df.head())
 print(df.shape)
 print(df.dtypes)
 
-list_of_units = [u for u in range(5, 105, 5)]
-# list_of_units = [5, 10]
+n_features = len(df.columns) - len(targets)
+print(f"{n_features=}")
+
+# list_of_units = [u for u in range(5, 105, 5)]
+list_of_units = [2**p for p in range(5, 12)]
 metrics_by_units = []
 
 for u in list_of_units:
     list_statistics = []
-    seeds = [random.randint(0, 2**32 - 1) for _ in range(repeats)]
+    # seeds = [random.randint(0, 2**32 - 1) for _ in range(repeats)]
     for i in range(repeats):
-        set_random_seed(seeds[i])
+        # set_random_seed(seeds[i])
         class_weight, x_train, y_train, x_test, y_test = preparate_data(
-            df, targets, seeds[i]
+            df, n_features, targets, scale=True, seed=None
         )
         model = create_model(hidden_units=u)
         history_data = train_model(
             model,
             x_train,
             y_train,
+            x_test,
+            y_test,
             class_weight,
             isSave=True,
             filename="ferritin-10000-3",
@@ -77,5 +82,5 @@ for u in list_of_units:
 
     metrics_by_units.append(metrics)
 
-with open("./output/metrics_by_units_10_launches.json", "w") as file:
+with open("./output/base_model/metrics_powers_two_units.json", "w") as file:
     json.dump(metrics_by_units, file, ensure_ascii=False, indent=4)
