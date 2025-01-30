@@ -28,15 +28,15 @@ targets = ["ferritin"]
 n_features = len(df.columns) - len(targets)
 print(f"{n_features=}")
 
-# k = 75
-# hidden_units = 90
-# n_bins = [5, 10, 12, 15, 20]
-# d_embedding = [5, 10, 15, 20, 30]
-
 k = 32
-hidden_units = 30
-n_bins = [10]
-d_embedding = [5]
+hidden_units = 50
+n_bins = [5, 10, 20]
+d_embedding = [5, 10, 20]
+
+# k = 32
+# hidden_units = 30
+# n_bins = [10]
+# d_embedding = [5]
 
 list_statistics = []
 
@@ -88,5 +88,5 @@ for n in n_bins:
         s["AUC"] = statistics["auc"]
         list_statistics.append(s)
 
-with open(f"./output/ple_ensembles/tuning_non-trainable.json", "w") as file:
+with open(f"./output/ple_ensembles/tuning_trainable.json", "w") as file:
     json.dump(list_statistics, file, ensure_ascii=False, indent=4)

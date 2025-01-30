@@ -119,16 +119,16 @@ def create_ensemble_with_ple(
 ) -> Model:
     input = Input(shape=(n_features,))
 
-    # x = PiecewiseLinearTrainableEmbeddings(
-    #     bins=bins,
-    #     d_embedding=d_embedding,
-    #     linear=True,
-    #     linear_activation=True,
-    #     activation=True,
-    # )(input)
-    # x = Flatten()(x)
+    x = PiecewiseLinearTrainableEmbeddings(
+        bins=bins,
+        d_embedding=d_embedding,
+        linear=True,
+        linear_activation=True,
+        activation=True,
+    )(input)
+    x = Flatten()(x)
 
-    x = PiecewiseLinearEmbeddings(bins=bins)(input)
+    # x = PiecewiseLinearEmbeddings(bins=bins)(input)
     x = RepeatVector(k)(x)
     x = BatchEnsembleLayer(
         k=k,
@@ -176,7 +176,7 @@ def train_model(
         # validation_data=(x_test, y_test),
         shuffle=True,
         class_weight=class_weight,
-        callbacks=[early_stopping, reduce_lr],
+        callbacks=[early_stopping(), reduce_lr()],
     )
     if isSave:
         script_dir = os.path.dirname(os.path.abspath(__file__))

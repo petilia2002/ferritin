@@ -1,0 +1,72 @@
+[
+  {
+    "n_bins": 5,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 86.52767261534858
+  },
+  {
+    "n_bins": 10,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 84.98200096506885
+  },
+  {
+    "n_bins": 15,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 86.57431521605089
+  },
+  {
+    "n_bins": 20,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 84.55305215310447
+  },
+  {
+    "n_bins": 25,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 86.75528112959618
+  },
+  {
+    "n_bins": 30,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 83.9967360419297
+  },
+  {
+    "n_bins": 35,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 84.68446450930529
+  },
+  {
+    "n_bins": 40,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 84.68342840995557
+  },
+  {
+    "n_bins": 45,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 85.53652259286439
+  },
+  {
+    "n_bins": 50,
+    "d_embedding": 5,
+    "k": 32,
+    "hidden_units": 50,
+    "AUC": 84.88781820672699
+  }
+]
