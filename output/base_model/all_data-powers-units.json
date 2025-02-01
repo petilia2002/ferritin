@@ -1,0 +1,93 @@
+[
+  {
+    "units": 32,
+    "avg_ot": 0.41,
+    "avg_tp": 1841.0,
+    "avg_tn": 14733.67,
+    "avg_fp": 3633.67,
+    "avg_fn": 475.67,
+    "avg_acc": 80.13,
+    "avg_sen": 79.46,
+    "avg_spec": 80.22,
+    "avg_f1": 47.26,
+    "avg_auc": 87.87
+  },
+  {
+    "units": 64,
+    "avg_ot": 0.4,
+    "avg_tp": 1877.0,
+    "avg_tn": 14661.33,
+    "avg_fp": 3672.67,
+    "avg_fn": 473.0,
+    "avg_acc": 79.96,
+    "avg_sen": 79.87,
+    "avg_spec": 79.97,
+    "avg_f1": 47.53,
+    "avg_auc": 88.22
+  },
+  {
+    "units": 128,
+    "avg_ot": 0.4,
+    "avg_tp": 1848.0,
+    "avg_tn": 14759.33,
+    "avg_fp": 3602.67,
+    "avg_fn": 474.0,
+    "avg_acc": 80.29,
+    "avg_sen": 79.59,
+    "avg_spec": 80.38,
+    "avg_f1": 47.55,
+    "avg_auc": 87.94
+  },
+  {
+    "units": 256,
+    "avg_ot": 0.39,
+    "avg_tp": 1887.0,
+    "avg_tn": 14724.67,
+    "avg_fp": 3611.0,
+    "avg_fn": 461.33,
+    "avg_acc": 80.31,
+    "avg_sen": 80.36,
+    "avg_spec": 80.31,
+    "avg_f1": 48.1,
+    "avg_auc": 88.32
+  },
+  {
+    "units": 512,
+    "avg_ot": 0.37,
+    "avg_tp": 1893.33,
+    "avg_tn": 14749.0,
+    "avg_fp": 3574.67,
+    "avg_fn": 467.0,
+    "avg_acc": 80.46,
+    "avg_sen": 80.21,
+    "avg_spec": 80.49,
+    "avg_f1": 48.37,
+    "avg_auc": 88.38
+  },
+  {
+    "units": 1024,
+    "avg_ot": 0.34,
+    "avg_tp": 1856.33,
+    "avg_tn": 14749.67,
+    "avg_fp": 3598.67,
+    "avg_fn": 479.33,
+    "avg_acc": 80.28,
+    "avg_sen": 79.48,
+    "avg_spec": 80.39,
+    "avg_f1": 47.65,
+    "avg_auc": 87.94
+  },
+  {
+    "units": 2048,
+    "avg_ot": 0.33,
+    "avg_tp": 1869.0,
+    "avg_tn": 14773.33,
+    "avg_fp": 3577.33,
+    "avg_fn": 464.33,
+    "avg_acc": 80.46,
+    "avg_sen": 80.1,
+    "avg_spec": 80.51,
+    "avg_f1": 48.05,
+    "avg_auc": 88.38
+  }
+]

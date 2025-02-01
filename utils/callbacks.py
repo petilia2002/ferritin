@@ -5,7 +5,7 @@ def early_stopping() -> EarlyStopping:
     return EarlyStopping(
         monitor="val_loss",
         min_delta=0,
-        patience=50,
+        patience=100,
         verbose=1,
         mode="auto",
         baseline=None,

@@ -23,6 +23,7 @@ from package.ensembles import *
 def create_model(hidden_units: int) -> Model:
     input = Input(shape=(12,))
     x = Dense(units=hidden_units, activation="relu")(input)
+    x = Dense(units=30, activation="relu")(x)
     """
     x = Dropout(rate=0.2)(x)
     x = Dense(units=25, activation="relu")(x)
@@ -34,7 +35,7 @@ def create_model(hidden_units: int) -> Model:
 
     model = Model(inputs=input, outputs=output)
 
-    opt = keras.optimizers.Adam(learning_rate=0.001)
+    opt = keras.optimizers.Adam(learning_rate=0.003)
     l = keras.losses.BinaryCrossentropy()
     m = keras.metrics.BinaryAccuracy()
 
@@ -169,7 +170,7 @@ def train_model(
     history = model.fit(
         x=x_train,
         y=y_train,
-        batch_size=250,
+        batch_size=500,
         epochs=100,
         verbose=2,
         validation_split=0.2,

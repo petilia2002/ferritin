@@ -10,7 +10,7 @@ targets = ["ferritin"]  # целевой показатель
 repeats = 3  # кол-во повторений обучения
 
 # Прочитаем данные:
-df = pd.read_csv("./data/ferritin-v2.csv", sep=",", dtype={"hgb": float})
+df = pd.read_csv("./data/ferritin-all.csv", sep=",", dtype={"hgb": float})
 print(df.head())
 print(df.shape)
 print(df.dtypes)
@@ -82,5 +82,5 @@ for u in list_of_units:
 
     metrics_by_units.append(metrics)
 
-with open("./output/base_model/metrics_powers_two_units.json", "w") as file:
+with open("./output/base_model/all_data-powers-units.json", "w") as file:
     json.dump(metrics_by_units, file, ensure_ascii=False, indent=4)
