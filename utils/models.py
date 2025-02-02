@@ -54,7 +54,13 @@ def create_model(hidden_units: int, units: int) -> Model:
     return model
 
 
-def create_ensemble(k: int = 3, hidden_units: int = 5):
+def create_ensemble(
+    k: int = 3,
+    hidden_units: int = 5,
+    random_signs: bool = False,
+    use_r: bool = True,
+    use_s: bool = False,
+):
     input = Input(shape=(12,))
     x = RepeatVector(k)(input)
     # x = DeepEnsembleLayer(k=k, units=hidden_units, last_layer=False, seed=None)(x)
@@ -64,40 +70,39 @@ def create_ensemble(k: int = 3, hidden_units: int = 5):
         k=k,
         units=hidden_units,
         last_layer=False,
-        random_signs=False,
+        random_signs=random_signs,
         seed=None,
     )(x)
     output = BatchEnsembleLayer(
         k=k,
         units=1,
         last_layer=True,
-        random_signs=False,
+        random_signs=random_signs,
         seed=None,
     )(x)
 
-    """
-    x = MiniEnsembleLayer(
-        k=k,
-        units=hidden_units,
-        use_r=True,
-        use_s=False,
-        last_layer=False,
-        random_signs=False,
-        seed=None,
-    )(x)
-    output = MiniEnsembleLayer(
-        k=k,
-        units=1,
-        use_r=True,
-        use_s=False,
-        last_layer=True,
-        random_signs=False,
-        seed=None,
-    )(x)
-    """
+    # x = MiniEnsembleLayer(
+    #     k=k,
+    #     units=hidden_units,
+    #     use_r=use_r,
+    #     use_s=use_s,
+    #     last_layer=False,
+    #     random_signs=random_signs,
+    #     seed=None,
+    # )(x)
+    # output = MiniEnsembleLayer(
+    #     k=k,
+    #     units=1,
+    #     use_r=use_r,
+    #     use_s=use_s,
+    #     last_layer=True,
+    #     random_signs=random_signs,
+    #     seed=None,
+    # )(x)
+
     model = Model(inputs=input, outputs=output)
 
-    opt = keras.optimizers.Adam(learning_rate=0.001)
+    opt = keras.optimizers.Adam(learning_rate=0.003)
     l = keras.losses.BinaryCrossentropy()
     m = keras.metrics.BinaryAccuracy()
 
@@ -118,7 +123,7 @@ def create_ensemble_with_ple(
     x = PiecewiseLinearTrainableEmbeddings(
         bins=bins,
         d_embedding=d_embedding,
-        linear=True,
+        linear=False,
         linear_activation=True,
         activation=True,
     )(input)
@@ -143,7 +148,7 @@ def create_ensemble_with_ple(
 
     model = Model(inputs=input, outputs=output)
 
-    opt = keras.optimizers.Adam(learning_rate=0.001)
+    opt = keras.optimizers.Adam(learning_rate=0.003)
     l = keras.losses.BinaryCrossentropy()
     m = keras.metrics.BinaryAccuracy()
 

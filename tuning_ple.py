@@ -18,7 +18,7 @@ from utils.processing import preparate_data
 from package.embeddings import *
 
 # Прочитаем данные:
-df = pd.read_csv("./data/ferritin-v2.csv", sep=",", dtype={"hgb": float})
+df = pd.read_csv("./data/ferritin-all.csv", sep=",", dtype={"hgb": float})
 # df.drop(columns=["gender"], inplace=True)
 print(df.head())
 print(df.shape)
@@ -28,22 +28,20 @@ targets = ["ferritin"]
 n_features = len(df.columns) - len(targets)
 print(f"{n_features=}")
 
-k = 32
-hidden_units = 50
-n_bins = [5, 10, 20]
-d_embedding = [5, 10, 20]
-
-# k = 32
-# hidden_units = 30
-# n_bins = [10]
-# d_embedding = [5]
+k = 10
+hidden_units = 90
+scale = False
+random_signs = True
+use_r, use_s = True, True
+n_bins = [20]
+d_embedding = [5, 10, 20, 32, 64, 128]
 
 list_statistics = []
 
 for n in n_bins:
     for d in d_embedding:
         class_weight, x_train, y_train, x_test, y_test = preparate_data(
-            df, n_features, targets, scale=False, seed=None
+            df, n_features, targets, scale=scale, seed=None
         )
         bins = compute_bins(x_train, n_bins=n)
         print(f"{bins=}")
@@ -88,5 +86,5 @@ for n in n_bins:
         s["AUC"] = statistics["auc"]
         list_statistics.append(s)
 
-with open(f"./output/ple_ensembles/tuning_trainable.json", "w") as file:
+with open(f"./output/ple_all_data/tuning_trainable.json", "w") as file:
     json.dump(list_statistics, file, ensure_ascii=False, indent=4)

@@ -18,7 +18,7 @@ from utils.processing import preparate_data
 from package.embeddings import *
 
 # Прочитаем данные:
-df = pd.read_csv("./data/ferritin-v2.csv", sep=",", dtype={"hgb": float})
+df = pd.read_csv("./data/ferritin-all.csv", sep=",", dtype={"hgb": float})
 print(df.head())
 print(df.shape)
 print(df.dtypes)
@@ -27,14 +27,16 @@ targets = ["ferritin"]
 n_features = len(df.columns) - len(targets)
 print(f"{n_features=}")
 
-k = 32
-hidden_units = 50
-n_bins = 30
-d_embedding = 5
+k = 10
+hidden_units = 90
+scale = False
+random_signs = True
+use_r, use_s = True, True
+n_bins = 20
+d_embedding = 32
 
-# set_random_seed(seed=42)
 class_weight, x_train, y_train, x_test, y_test = preparate_data(
-    df, n_features, targets, scale=False, seed=None
+    df, n_features, targets, scale=scale, seed=None
 )
 bins = compute_bins(x_train, n_bins=n_bins)
 model = create_ensemble_with_ple(
@@ -69,7 +71,7 @@ statistics = evaluate_model(
 )
 
 with open(
-    f"./output/ple_ensembles/n_bins-{n_bins}_d-{d_embedding}_k-{k}_units-{hidden_units}.json",
+    f"./output/ple_all_data/n_bins-{n_bins}_d-{d_embedding}_k-{k}_units-{hidden_units}.json",
     "w",
 ) as file:
     json.dump(statistics, file, ensure_ascii=False, indent=4)

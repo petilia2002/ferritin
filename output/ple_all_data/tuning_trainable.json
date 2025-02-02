@@ -1,0 +1,44 @@
+[
+  {
+    "n_bins": 20,
+    "d_embedding": 5,
+    "k": 10,
+    "hidden_units": 90,
+    "AUC": 88.3187106887084
+  },
+  {
+    "n_bins": 20,
+    "d_embedding": 10,
+    "k": 10,
+    "hidden_units": 90,
+    "AUC": 88.21838664885927
+  },
+  {
+    "n_bins": 20,
+    "d_embedding": 20,
+    "k": 10,
+    "hidden_units": 90,
+    "AUC": 87.4094831504346
+  },
+  {
+    "n_bins": 20,
+    "d_embedding": 32,
+    "k": 10,
+    "hidden_units": 90,
+    "AUC": 88.49812486774529
+  },
+  {
+    "n_bins": 20,
+    "d_embedding": 64,
+    "k": 10,
+    "hidden_units": 90,
+    "AUC": 87.66709888162607
+  },
+  {
+    "n_bins": 20,
+    "d_embedding": 128,
+    "k": 10,
+    "hidden_units": 90,
+    "AUC": 87.6244497279206
+  }
+]
