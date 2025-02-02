@@ -18,8 +18,10 @@ print(df.dtypes)
 n_features = len(df.columns) - len(targets)
 print(f"{n_features=}")
 
-# list_of_units = [u for u in range(5, 105, 5)]
-list_of_units = [2**p for p in range(5, 12)]
+hidden_units = 90
+list_of_units = [u for u in range(5, 105, 5)]
+# list_of_units = [2**p for p in range(5, 12)]
+# list_of_units = [50]
 metrics_by_units = []
 
 for u in list_of_units:
@@ -30,7 +32,7 @@ for u in list_of_units:
         class_weight, x_train, y_train, x_test, y_test = preparate_data(
             df, n_features, targets, scale=True, seed=None
         )
-        model = create_model(hidden_units=u)
+        model = create_model(hidden_units=hidden_units, units=u)
         history_data = train_model(
             model,
             x_train,
@@ -82,5 +84,5 @@ for u in list_of_units:
 
     metrics_by_units.append(metrics)
 
-with open("./output/base_model/all_data-powers-units.json", "w") as file:
+with open("./output/base_model/sec_layer_100-range.json", "w") as file:
     json.dump(metrics_by_units, file, ensure_ascii=False, indent=4)

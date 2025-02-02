@@ -26,6 +26,7 @@ n_features = len(df.columns) - len(targets)
 print(f"{n_features=}")
 
 hidden_units = 90
+units = 95
 
 list_statistics = []
 for i in range(repeats):
@@ -33,7 +34,7 @@ for i in range(repeats):
     class_weight, x_train, y_train, x_test, y_test = preparate_data(
         df, n_features, targets, scale=True, seed=None
     )
-    model = create_model(hidden_units)
+    model = create_model(hidden_units, units)
     history_data = train_model(
         model,
         x_train,
@@ -76,7 +77,7 @@ for key in list_statistics[0].keys():
     avg_statistics[f"list_{key}"] = results
 
 with open(
-    f"./output/base_model/res-all_data-{hidden_units}-units.json",
+    f"./output/base_model/res-all_data-{hidden_units}-hidden_{units}-units.json",
     "w",
 ) as file:
     json.dump(avg_statistics, file, ensure_ascii=False, indent=4)

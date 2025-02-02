@@ -20,17 +20,12 @@ from package.embeddings import *
 from package.ensembles import *
 
 
-def create_model(hidden_units: int) -> Model:
+def create_model(hidden_units: int, units: int) -> Model:
     input = Input(shape=(12,))
     x = Dense(units=hidden_units, activation="relu")(input)
-    x = Dense(units=30, activation="relu")(x)
-    """
-    x = Dropout(rate=0.2)(x)
-    x = Dense(units=25, activation="relu")(x)
-    x = Dropout(rate=0.2)(x)
-    x = Dense(units=10, activation="relu")(x)
-    x = Dropout(rate=0.1)(x)
-    """
+    # x = Dropout(0.3)(x)
+    # x = Dense(units=units, activation="relu")(x)
+    # x = Dropout(0.3)(x)
     output = Dense(units=1, activation="sigmoid")(x)
 
     model = Model(inputs=input, outputs=output)
