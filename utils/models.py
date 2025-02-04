@@ -4,9 +4,10 @@ import sys
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
-from keras.layers import Input, Dense, Dropout, RepeatVector, Flatten, Layer
-from keras.models import Model
-from keras.utils import plot_model
+from keras.api.layers import Input, Dense, Dropout, RepeatVector, Flatten, Layer
+from keras.api.models import Model
+from keras.api.initializers import Constant
+from keras.api.utils import plot_model
 
 # Добавляем корневую папку utils в sys.path:
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -20,13 +21,15 @@ from package.embeddings import *
 from package.ensembles import *
 
 
-def create_model(hidden_units: int, units: int) -> Model:
+def create_model(hidden_units, pos, neg) -> Model:
+    out_bias_init = Constant(value=np.log(pos / neg))
+
     input = Input(shape=(12,))
     x = Dense(units=hidden_units, activation="relu")(input)
     # x = Dropout(0.3)(x)
     # x = Dense(units=units, activation="relu")(x)
     # x = Dropout(0.3)(x)
-    output = Dense(units=1, activation="sigmoid")(x)
+    output = Dense(units=1, activation="sigmoid", bias_initializer="zeros")(x)
 
     model = Model(inputs=input, outputs=output)
 
@@ -167,6 +170,7 @@ def train_model(
     isSave: bool,
     filename: str = "",
 ) -> Dict[str, List[float]]:
+    # print(model.layers[-1].get_weights())
     history = model.fit(
         x=x_train,
         y=y_train,
@@ -174,9 +178,8 @@ def train_model(
         epochs=100,
         verbose=2,
         validation_split=0.2,
-        # validation_data=(x_test, y_test),
         shuffle=True,
-        class_weight=class_weight,
+        # class_weight=class_weight,
         callbacks=[early_stopping(), reduce_lr()],
     )
     if isSave:

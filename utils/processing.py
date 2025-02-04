@@ -1,9 +1,32 @@
 from typing import Tuple, List, Dict
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.utils import shuffle
+
+
+def use_oversampling(x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    pos_mask = (y == 1.0).flatten()
+    neg_mask = ~pos_mask
+
+    pos_x, neg_x = x[pos_mask], x[neg_mask]
+    pos_y, neg_y = y[pos_mask], y[neg_mask]
+
+    indices = np.arange(len(pos_x), dtype=int)
+    indices = np.random.choice(indices, len(neg_x))
+
+    resampled_pos_x = pos_x[indices]
+    resampled_pos_y = pos_y[indices]
+
+    resampled_x = np.concatenate([resampled_pos_x, neg_x], axis=0)
+    resampled_y = np.concatenate([resampled_pos_y, neg_y], axis=0)
+
+    order = np.arange(len(resampled_y), dtype=int)
+    np.random.shuffle(order)
+    resampled_x = resampled_x[order]
+    resampled_y = resampled_y[order]
+    return resampled_x, resampled_y
 
 
 def preparate_data(
@@ -19,6 +42,10 @@ def preparate_data(
     y = np.array(list(map(lambda x: (1 if x < 12.0 else 0), y)), dtype="int64")
     print(f"Shape of y: {y.shape}")
     print(f"Доля пациентов с низким ферритином: {100 * sum(y) / len(y)}%")
+    pos, neg = sum(y), len(y) - sum(y)
+    print(f"total={len(y)}")
+    print(f"{pos=}")
+    print(f"{neg=}")
 
     x = df.drop(targets, axis=1).to_numpy()
     print(f"Shape of x: {x.shape}")
@@ -36,8 +63,9 @@ def preparate_data(
     x_scaled = x
     # Масштабируем данные:
     if scale:
-        scaler = MinMaxScaler(feature_range=(0, 1))
+        scaler = StandardScaler()
         x_scaled = scaler.fit_transform(x)
+        # x_scaled = np.clip(a=x_scaled, a_min=-5.0, a_max=5.0)
         print(f"Shape of scaled x: {x_scaled.shape}")
     data_size = x_scaled.shape[0]
     print(f"Размер всех данных: {data_size}")
@@ -51,11 +79,6 @@ def preparate_data(
 
     y_train = np.zeros((train_size, 1), dtype=float)
     y_test = np.zeros((test_size, 1), dtype=float)
-
-    print(f"Shape of x_train: {x_train.shape}")
-    print(f"Shape of x_test: {x_test.shape}")
-    print(f"Shape of y_train: {y_train.shape}")
-    print(f"Shape of y_test: {y_test.shape}")
 
     # Перемешаем данные:
     inds = [i for i in range(data_size)]
@@ -71,4 +94,10 @@ def preparate_data(
         y_test[j] = y[inds[i]]
         j += 1
 
-    return class_weight, x_train, y_train, x_test, y_test
+    # x_train, y_train = use_oversampling(x_train, y_train)
+    print(f"Shape of x_train: {x_train.shape}")
+    print(f"Shape of x_test: {x_test.shape}")
+    print(f"Shape of y_train: {y_train.shape}")
+    print(f"Shape of y_test: {y_test.shape}")
+
+    return class_weight, x_train, y_train, x_test, y_test, pos, neg
