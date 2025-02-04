@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.utils import shuffle
+from imblearn.over_sampling import SMOTE, SMOTENC, ADASYN
 
 
 def use_oversampling(x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
@@ -94,6 +95,9 @@ def preparate_data(
         y_test[j] = y[inds[i]]
         j += 1
 
+    # sm = SMOTENC(categorical_features=[0], k_neighbors=5)
+    # sm = ADASYN()
+    # x_train, y_train = sm.fit_resample(x_train, y_train)
     # x_train, y_train = use_oversampling(x_train, y_train)
     print(f"Shape of x_train: {x_train.shape}")
     print(f"Shape of x_test: {x_test.shape}")

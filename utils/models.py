@@ -179,7 +179,7 @@ def train_model(
         verbose=2,
         validation_split=0.2,
         shuffle=True,
-        # class_weight=class_weight,
+        class_weight=class_weight,
         callbacks=[early_stopping(), reduce_lr()],
     )
     if isSave:
