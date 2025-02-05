@@ -4,7 +4,8 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.utils import shuffle
-from imblearn.over_sampling import SMOTE, SMOTENC, ADASYN
+
+# from imblearn.over_sampling import SMOTE, SMOTENC, ADASYN
 
 
 def use_oversampling(x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:

@@ -4,10 +4,19 @@ import sys
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
-from keras.api.layers import Input, Dense, Dropout, RepeatVector, Flatten, Layer
-from keras.api.models import Model
-from keras.api.initializers import Constant
-from keras.api.utils import plot_model
+from keras.layers import (
+    Input,
+    Dense,
+    Dropout,
+    RepeatVector,
+    Flatten,
+    BatchNormalization,
+    LayerNormalization,
+    Activation,
+)
+from keras.models import Model
+from keras.initializers import Constant
+from keras.utils import plot_model
 
 # Добавляем корневую папку utils в sys.path:
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -26,10 +35,8 @@ def create_model(hidden_units, pos, neg) -> Model:
 
     input = Input(shape=(12,))
     x = Dense(units=hidden_units, activation="relu")(input)
-    # x = Dropout(0.3)(x)
-    # x = Dense(units=units, activation="relu")(x)
-    # x = Dropout(0.3)(x)
-    output = Dense(units=1, activation="sigmoid", bias_initializer="zeros")(x)
+    # x = LayerNormalization()(x)
+    output = Dense(units=1, activation="sigmoid")(x)
 
     model = Model(inputs=input, outputs=output)
 

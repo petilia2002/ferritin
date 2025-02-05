@@ -3,13 +3,12 @@ import os
 # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 import pandas as pd
-from keras.api.utils import set_random_seed
+from keras.utils import set_random_seed
 import json
 import random
-
-from utils.plots import plot_loss
-from utils.models import create_model, train_model, evaluate_model
-from utils.processing import preparate_data
+from utils.plots import *
+from utils.models import *
+from utils.processing import *
 
 repeats = 3  # кол-во повторений обучения
 # Установим seed для воспроизводимости результатов:
@@ -45,7 +44,7 @@ for i in range(repeats):
         filename="ferritin-all",
     )
     # Визуализируем кривые обучения:
-    plot_loss(history_data, f"history_100-epochs_ferritin-all")
+    plot_loss2(history_data, f"history_100-epochs_ferritin-all")
 
     y_train_predict = model.predict(x_train)
     y_predict = model.predict(x_test)

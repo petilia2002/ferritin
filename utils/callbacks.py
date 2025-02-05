@@ -1,4 +1,4 @@
-from keras.api.callbacks import EarlyStopping, ReduceLROnPlateau
+from keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
 
 def early_stopping() -> EarlyStopping:
@@ -17,7 +17,7 @@ def early_stopping() -> EarlyStopping:
 def reduce_lr() -> ReduceLROnPlateau:
     return ReduceLROnPlateau(
         monitor="val_loss",
-        factor=0.9,
+        factor=0.5,
         patience=20,
         verbose=1,
         mode="auto",
