@@ -1,7 +1,3 @@
-import os
-
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
 import pandas as pd
 from keras.utils import set_random_seed
 import json
@@ -11,9 +7,6 @@ from utils.models import *
 from utils.processing import *
 
 repeats = 3  # кол-во повторений обучения
-# Установим seed для воспроизводимости результатов:
-seeds = [random.randint(0, 2**32 - 1) for _ in range(repeats)]
-
 # Прочитаем данные:
 df = pd.read_csv("./data/ferritin-all.csv", sep=",", dtype={"hgb": float})
 print(df.head())
@@ -28,11 +21,10 @@ hidden_units = 90
 
 list_statistics = []
 for i in range(repeats):
-    # set_random_seed(seeds[i])
     class_weight, x_train, y_train, x_test, y_test, pos, neg = preparate_data(
-        df, n_features, targets, scale=True, encode=False, seed=None
+        df, n_features, targets, scale=True, encode=True, seed=None
     )
-    model = create_model(hidden_units, pos, neg)
+    model = create_softmax_model(hidden_units)
     history_data = train_model(
         model,
         x_train,
@@ -44,10 +36,17 @@ for i in range(repeats):
         filename="ferritin-all",
     )
     # Визуализируем кривые обучения:
-    plot_loss2(history_data, False, f"history_100-epochs_ferritin-all")
+    plot_loss2(history_data, True, f"history_100-epochs_ferritin-all")
 
     y_train_predict = model.predict(x_train)
     y_predict = model.predict(x_test)
+    print(f"Shape of y train predict: {y_train_predict.shape}")
+    print(f"Shape of y predict: {y_predict.shape}")
+
+    y_train = y_train[:, 0]
+    y_test = y_test[:, 0]
+    y_train_predict = y_train_predict[:, 0]
+    y_predict = y_predict[:, 0]
     print(f"Shape of y train predict: {y_train_predict.shape}")
     print(f"Shape of y predict: {y_predict.shape}")
 

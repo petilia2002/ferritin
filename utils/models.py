@@ -63,6 +63,22 @@ def create_model(hidden_units, pos, neg) -> Model:
     return model
 
 
+def create_softmax_model(hidden_units) -> Model:
+    input = Input(shape=(12,))
+    x = Dense(units=hidden_units, activation="relu")(input)
+    output = Dense(units=2, activation="softmax")(x)
+
+    model = Model(inputs=input, outputs=output)
+
+    opt = keras.optimizers.Adam(learning_rate=0.003)
+    l = keras.losses.CategoricalCrossentropy()
+    m = keras.metrics.CategoricalAccuracy()
+
+    model.compile(optimizer=opt, loss=l, metrics=[m])
+    model.summary()
+    return model
+
+
 def create_ensemble(
     k: int = 3,
     hidden_units: int = 5,
@@ -214,6 +230,8 @@ def evaluate_model(
     tp, tn, fp, fn = calculate_confusion_matrix(y_test, y_predict, ot)
 
     accuracy = 100.0 * (tp + tn) / (tp + tn + fp + fn)
+    recall = 100.0 * tp / (tp + fn)
+    precision = 100.0 * tp / (tp + fp)
     sensitivity = 100.0 * tp / (tp + fn)
     specificity = 100.0 * tn / (tn + fp)
     f1_score = 100.0 * 2.0 * tp / (2.0 * tp + fp + fn)
@@ -231,6 +249,8 @@ def evaluate_model(
         print(f"FP = {int(fp)}")
         print(f"FN = {int(fn)}")
         print(f"Accuracy = {accuracy:.2f} %")
+        print(f"Recall = {recall:.2f} %")
+        print(f"Precision = {precision:.2f} %")
         print(f"Sensitivity = {sensitivity:.2f} %")
         print(f"Specificity = {specificity:.2f} %")
         print(f"F1-score = {f1_score:.2f} %")
@@ -243,6 +263,8 @@ def evaluate_model(
     statistics["fp"] = fp
     statistics["fn"] = fn
     statistics["acc"] = accuracy
+    statistics["precision"] = precision
+    statistics["recall"] = recall
     statistics["sen"] = sensitivity
     statistics["spec"] = specificity
     statistics["f1"] = f1_score

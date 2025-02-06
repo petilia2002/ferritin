@@ -8,6 +8,12 @@ from sklearn.utils import shuffle
 # from imblearn.over_sampling import SMOTE, SMOTENC, ADASYN
 
 
+def label_encode(y: np.ndarray, n_class: int = 2):
+    one_hot = np.eye(n_class)
+    y_enc = one_hot[y.flatten()]
+    return y_enc
+
+
 def use_oversampling(x: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     pos_mask = (y == 1.0).flatten()
     neg_mask = ~pos_mask
@@ -36,13 +42,13 @@ def preparate_data(
     n_features: int,
     targets: List[str],
     scale: bool = True,
+    encode: bool = False,
     seed: int = 42,
 ) -> Tuple[Dict[int, float], np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
     y = df.filter(items=targets).to_numpy().flatten().astype("float64")
 
     y = np.array(list(map(lambda x: (1 if x < 12.0 else 0), y)), dtype="int64")
-    print(f"Shape of y: {y.shape}")
     print(f"Доля пациентов с низким ферритином: {100 * sum(y) / len(y)}%")
     pos, neg = sum(y), len(y) - sum(y)
     print(f"total={len(y)}")
@@ -62,6 +68,10 @@ def preparate_data(
     )
     print(f"Веса классов: {class_weight}")
 
+    if encode:
+        y = label_encode(y)
+    print(f"Shape of y: {y.shape}")
+
     x_scaled = x
     # Масштабируем данные:
     if scale:
@@ -79,8 +89,8 @@ def preparate_data(
     x_train = np.zeros((train_size, n_features), dtype=float)
     x_test = np.zeros((test_size, n_features), dtype=float)
 
-    y_train = np.zeros((train_size, 1), dtype=float)
-    y_test = np.zeros((test_size, 1), dtype=float)
+    y_train = np.zeros((train_size, y.ndim), dtype=float)
+    y_test = np.zeros((test_size, y.ndim), dtype=float)
 
     # Перемешаем данные:
     inds = [i for i in range(data_size)]

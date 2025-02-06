@@ -64,11 +64,14 @@ def plot_loss(history_data: Dict[str, List[float]], filename: str):
     plt.savefig(os.path.join(output_dir, f"{filename}.png"), dpi=300)
 
 
-def plot_loss2(history_data: Dict[str, List[float]], filename: str):
+def plot_loss2(
+    history_data: Dict[str, List[float]], softmax: bool = False, filename: str = ""
+):
+    metric = "categorical" if softmax else "binary"
     train_loss = history_data["loss"]
     val_loss = history_data["val_loss"]
-    train_accuracy = history_data["binary_accuracy"]
-    val_accuracy = history_data["val_binary_accuracy"]
+    train_accuracy = history_data[f"{metric}_accuracy"]
+    val_accuracy = history_data[f"val_{metric}_accuracy"]
 
     fig, axes = plt.subplots(1, 2, figsize=(15, 4))
     x_values = [i for i in range(1, len(train_loss) + 1)]

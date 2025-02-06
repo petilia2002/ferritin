@@ -1,26 +1,35 @@
 import numpy as np
+from keras import ops
+from keras.losses import CategoricalCrossentropy
+import tensorflow as tf
+from keras.backend import epsilon
 
-x = [np.array([[1, 2, 3], [4, 5, 6]]), np.array([7, 8, 11])]
-y = [2 * np.array([[1, 2, 3], [4, 5, 6]]), 2 * np.array([7, 8, 11])]
-w = []
-w.append(x)
-w.append(y)
-# print(w)
+loss = CategoricalCrossentropy()
 
-# # Реализация:
-# weights = list(map(lambda x: x[0], w))
-# biases = list(map(lambda x: x[1], w))
+y_true = np.array([[0, 1, 0], [0, 0, 1]])
+y_pred = np.array([[0.05, 0.95, 0], [0.1, 0.8, 0.1]])
+# y_true = np.array([[0, 1, 0]])
+# y_pred = np.array([[0.05, 0.95, 0]])
+print(y_true)
+print(y_pred)
 
-# new_weights = [np.mean(weights, axis=0), np.mean(biases, axis=0)]
+res = loss(y_true, y_pred)
+print(res)
 
-# print()
-# print(new_weights)
 
-# average_weights = []
-# for weights in zip(*w):
-#     average_weights.append(np.mean(weights, axis=0))
+# def categorical_crossentropy(y_true, y_pred):
+#     y_pred = np.clip(a=y_pred, a_min=epsilon(), a_max=1.0 - epsilon())
+#     loss = y_true * ops.log(y_pred)
+#     loss = -ops.sum(loss, axis=-1)
+#     return ops.mean(loss)
 
-# print(average_weights)
 
-a = [1, 2, 3, 4, 5]
-print(a[-4:])
+def categorical_crossentropy(y_true, y_pred):
+    y_pred = tf.clip_by_value(y_pred, epsilon(), 1.0 - epsilon())
+    loss = y_true * tf.math.log(y_pred)
+    loss = -tf.reduce_sum(loss, axis=-1)
+    return tf.reduce_mean(loss)
+
+
+res = categorical_crossentropy(y_true, y_pred)
+print(res)
