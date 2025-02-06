@@ -185,7 +185,7 @@ def train_model(
         validation_split=0.2,
         shuffle=True,
         class_weight=class_weight,
-        callbacks=[early_stopping(), reduce_lr(), average_weights(100)],
+        callbacks=[reduce_lr()],
     )
     if isSave:
         script_dir = os.path.dirname(os.path.abspath(__file__))

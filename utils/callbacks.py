@@ -32,7 +32,7 @@ def early_stopping() -> EarlyStopping:
         verbose=1,
         mode="auto",
         baseline=None,
-        restore_best_weights=False,
+        restore_best_weights=True,
         start_from_epoch=0,
     )
 
