@@ -23,9 +23,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 # Добавляем корневую папку проекта в sys.path:
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
-from utils.callbacks import early_stopping, reduce_lr
-from utils.plots import plot_roc_curve
-from utils.statistic import find_optimal_threshold, calculate_confusion_matrix
+from utils.callbacks import *
+from utils.plots import *
+from utils.statistic import *
 from package.embeddings import *
 from package.ensembles import *
 
@@ -35,7 +35,6 @@ def create_model(hidden_units, pos, neg) -> Model:
 
     input = Input(shape=(12,))
     x = Dense(units=hidden_units, activation="relu")(input)
-    # x = LayerNormalization()(x)
     output = Dense(units=1, activation="sigmoid")(x)
 
     model = Model(inputs=input, outputs=output)
@@ -177,7 +176,6 @@ def train_model(
     isSave: bool,
     filename: str = "",
 ) -> Dict[str, List[float]]:
-    # print(model.layers[-1].get_weights())
     history = model.fit(
         x=x_train,
         y=y_train,
@@ -187,7 +185,7 @@ def train_model(
         validation_split=0.2,
         shuffle=True,
         class_weight=class_weight,
-        callbacks=[early_stopping(), reduce_lr()],
+        callbacks=[early_stopping(), reduce_lr(), average_weights(100)],
     )
     if isSave:
         script_dir = os.path.dirname(os.path.abspath(__file__))
