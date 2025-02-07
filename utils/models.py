@@ -45,7 +45,6 @@ def create_model(hidden_units, class_weight, pos, neg) -> Model:
 
     opt = keras.optimizers.Adam(learning_rate=0.003)
     # l = keras.losses.BinaryCrossentropy()
-    # l = make_weighted_bce(class_weight)
     l = CustomBinaryCrossentropy()
     m = keras.metrics.BinaryAccuracy()
 
@@ -198,15 +197,18 @@ def train_model(
     isSave: bool,
     filename: str = "",
 ) -> Dict[str, List[float]]:
-    # sample_weight = np.array([class_weight[int(y)] for y in y_train.flatten()])
-    sample_weight = np.zeros((len(y_train)))
+    sample_weight = np.array([class_weight[int(y)] for y in y_train.flatten()])
+    sample_weight = sample_weight.astype(np.float32)
+    sample_weight = sample_weight.reshape(-1, 1)
+
     history = model.fit(
         x=x_train,
         y=y_train,
         batch_size=500,
         epochs=100,
         verbose=2,
-        validation_split=0.2,
+        # validation_split=0.2,
+        validation_data=(x_test, y_test),
         shuffle=True,
         # class_weight=class_weight,
         sample_weight=sample_weight,

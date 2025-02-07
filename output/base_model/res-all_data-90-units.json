@@ -1,50 +1,26 @@
 {
-    "avg_ot": 0.12,
-    "list_ot": [
-        0.12
-    ],
-    "avg_tp": 1859.0,
-    "list_tp": [
-        1859
-    ],
-    "avg_tn": 14928.0,
-    "list_tn": [
-        14928
-    ],
-    "avg_fp": 3446.0,
-    "list_fp": [
-        3446
-    ],
-    "avg_fn": 451.0,
-    "list_fn": [
-        451
-    ],
-    "avg_acc": 81.16,
-    "list_acc": [
-        81.16
-    ],
-    "avg_precision": 35.04,
-    "list_precision": [
-        35.04
-    ],
-    "avg_recall": 80.48,
-    "list_recall": [
-        80.48
-    ],
-    "avg_sen": 80.48,
-    "list_sen": [
-        80.48
-    ],
-    "avg_spec": 81.25,
-    "list_spec": [
-        81.25
-    ],
-    "avg_f1": 48.82,
-    "list_f1": [
-        48.82
-    ],
-    "avg_auc": 88.47,
-    "list_auc": [
-        88.47
-    ]
+  "avg_ot": 0.51,
+  "list_ot": [0.51],
+  "avg_tp": 1840.0,
+  "list_tp": [1840],
+  "avg_tn": 14886.0,
+  "list_tn": [14886],
+  "avg_fp": 3474.0,
+  "list_fp": [3474],
+  "avg_fn": 484.0,
+  "list_fn": [484],
+  "avg_acc": 80.86,
+  "list_acc": [80.86],
+  "avg_precision": 34.63,
+  "list_precision": [34.63],
+  "avg_recall": 79.17,
+  "list_recall": [79.17],
+  "avg_sen": 79.17,
+  "list_sen": [79.17],
+  "avg_spec": 81.08,
+  "list_spec": [81.08],
+  "avg_f1": 48.18,
+  "list_f1": [48.18],
+  "avg_auc": 88.39,
+  "list_auc": [88.39]
 }

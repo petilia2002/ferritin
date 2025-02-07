@@ -20,14 +20,20 @@ class CustomBinaryCrossentropy(Loss):
     def __init__(self):
         super().__init__()
 
-    def call(self, y_true, y_pred, sample_weight=None):
+    # def call(self, y_true, y_pred):
+    #     # Обрезаем предсказания, чтобы избежать log(0)
+    #     y_pred = tf.clip_by_value(y_pred, K.epsilon(), 1.0 - K.epsilon())
+    #     # Вычисляем стандартную BCE
+    #     loss = -y_true * tf.math.log(y_pred) - (1 - y_true) * tf.math.log(1 - y_pred)
+    #     return tf.reduce_mean(loss)
+
+    def __call__(self, y_true, y_pred, sample_weight=None):
         # Обрезаем предсказания, чтобы избежать log(0)
         y_pred = tf.clip_by_value(y_pred, K.epsilon(), 1.0 - K.epsilon())
-
         # Вычисляем стандартную BCE
         loss = -y_true * tf.math.log(y_pred) - (1 - y_true) * tf.math.log(1 - y_pred)
         if sample_weight is not None:
-            loss *= sample_weight
+            loss = loss * sample_weight
         return tf.reduce_mean(loss)
 
 
