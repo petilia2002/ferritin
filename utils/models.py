@@ -28,9 +28,13 @@ from utils.plots import *
 from utils.statistic import *
 from package.embeddings import *
 from package.ensembles import *
+from utils.losses import *
+import tensorflow as tf
+import keras.backend as K
+from keras import backend as K
 
 
-def create_model(hidden_units, pos, neg) -> Model:
+def create_model(hidden_units, class_weight, pos, neg) -> Model:
     out_bias_init = Constant(value=np.log(pos / neg))
 
     input = Input(shape=(12,))
@@ -40,7 +44,9 @@ def create_model(hidden_units, pos, neg) -> Model:
     model = Model(inputs=input, outputs=output)
 
     opt = keras.optimizers.Adam(learning_rate=0.003)
-    l = keras.losses.BinaryCrossentropy()
+    # l = keras.losses.BinaryCrossentropy()
+    # l = make_weighted_bce(class_weight)
+    l = CustomBinaryCrossentropy()
     m = keras.metrics.BinaryAccuracy()
 
     model.compile(optimizer=opt, loss=l, metrics=[m])
@@ -74,7 +80,7 @@ def create_softmax_model(hidden_units) -> Model:
     l = keras.losses.CategoricalCrossentropy()
     m = keras.metrics.CategoricalAccuracy()
 
-    model.compile(optimizer=opt, loss=l, metrics=[m])
+    model.compile(optimizer=opt, loss=categorical_crossentropy, metrics=[m])
     model.summary()
     return model
 
@@ -192,6 +198,8 @@ def train_model(
     isSave: bool,
     filename: str = "",
 ) -> Dict[str, List[float]]:
+    # sample_weight = np.array([class_weight[int(y)] for y in y_train.flatten()])
+    sample_weight = np.zeros((len(y_train)))
     history = model.fit(
         x=x_train,
         y=y_train,
@@ -200,7 +208,8 @@ def train_model(
         verbose=2,
         validation_split=0.2,
         shuffle=True,
-        class_weight=class_weight,
+        # class_weight=class_weight,
+        sample_weight=sample_weight,
         callbacks=[reduce_lr()],
     )
     if isSave:

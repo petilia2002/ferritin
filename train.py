@@ -10,7 +10,7 @@ from utils.plots import *
 from utils.models import *
 from utils.processing import *
 
-repeats = 3  # кол-во повторений обучения
+repeats = 1  # кол-во повторений обучения
 # Установим seed для воспроизводимости результатов:
 seeds = [random.randint(0, 2**32 - 1) for _ in range(repeats)]
 
@@ -32,7 +32,7 @@ for i in range(repeats):
     class_weight, x_train, y_train, x_test, y_test, pos, neg = preparate_data(
         df, n_features, targets, scale=True, encode=False, seed=None
     )
-    model = create_model(hidden_units, pos, neg)
+    model = create_model(hidden_units, class_weight, pos, neg)
     history_data = train_model(
         model,
         x_train,
