@@ -44,8 +44,8 @@ def create_model(hidden_units, class_weight, pos, neg) -> Model:
     model = Model(inputs=input, outputs=output)
 
     opt = keras.optimizers.Adam(learning_rate=0.003)
-    # l = keras.losses.BinaryCrossentropy()
-    l = CustomBinaryCrossentropy()
+    l = keras.losses.BinaryCrossentropy()
+    # l = CustomBinaryCrossentropy(class_weight)
     m = keras.metrics.BinaryAccuracy()
 
     model.compile(optimizer=opt, loss=l, metrics=[m])
@@ -68,7 +68,7 @@ def create_model(hidden_units, class_weight, pos, neg) -> Model:
     return model
 
 
-def create_softmax_model(hidden_units) -> Model:
+def create_softmax_model(hidden_units, class_weight) -> Model:
     input = Input(shape=(12,))
     x = Dense(units=hidden_units, activation="relu")(input)
     output = Dense(units=2, activation="softmax")(x)
@@ -76,10 +76,11 @@ def create_softmax_model(hidden_units) -> Model:
     model = Model(inputs=input, outputs=output)
 
     opt = keras.optimizers.Adam(learning_rate=0.003)
-    l = keras.losses.CategoricalCrossentropy()
+    # l = keras.losses.CategoricalCrossentropy()
+    l = CustomCategoricalCrossentropy(class_weight)
     m = keras.metrics.CategoricalAccuracy()
 
-    model.compile(optimizer=opt, loss=categorical_crossentropy, metrics=[m])
+    model.compile(optimizer=opt, loss=l, metrics=[m])
     model.summary()
     return model
 
@@ -197,7 +198,11 @@ def train_model(
     isSave: bool,
     filename: str = "",
 ) -> Dict[str, List[float]]:
-    sample_weight = np.array([class_weight[int(y)] for y in y_train.flatten()])
+    sample_weight = (
+        np.array([class_weight[int(y)] for y in y_train.flatten()])
+        if y_train.shape[-1] == 1
+        else np.array([class_weight[i] for i in np.where(y_train > 0)[-1]])
+    )
     sample_weight = sample_weight.astype(np.float32)
     sample_weight = sample_weight.reshape(-1, 1)
 
