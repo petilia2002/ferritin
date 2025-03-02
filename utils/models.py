@@ -76,8 +76,8 @@ def create_softmax_model(hidden_units, class_weight) -> Model:
     model = Model(inputs=input, outputs=output)
 
     opt = keras.optimizers.Adam(learning_rate=0.003)
-    # l = keras.losses.CategoricalCrossentropy()
-    l = CustomCategoricalCrossentropy(class_weight)
+    l = keras.losses.CategoricalCrossentropy()
+    # l = CustomCategoricalCrossentropy(class_weight)
     m = keras.metrics.CategoricalAccuracy()
 
     model.compile(optimizer=opt, loss=l, metrics=[m])
@@ -215,8 +215,8 @@ def train_model(
         # validation_split=0.2,
         validation_data=(x_test, y_test),
         shuffle=True,
-        # class_weight=class_weight,
-        sample_weight=sample_weight,
+        class_weight=class_weight,
+        # sample_weight=sample_weight,
         callbacks=[reduce_lr()],
     )
     if isSave:
