@@ -106,9 +106,7 @@ class BatchEnsembleLayer(Layer):
         output = ops.matmul(x, self.kernel)  # (2, 3, 2) x (2, 2) = (2, 3, 2)
         output = ops.multiply(output, self.s)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
         output = ops.add(output, self.bias)  # (2, 3, 2) + (2, 1, 2) = (2, 3, 2)
-        output = (
-            ops.sigmoid(output) if self.last_layer else ops.relu(output)
-        )  # (2, 3, 2)
+        output = output if self.last_layer else ops.relu(output)  # (2, 3, 2)
         if self.last_layer:
             output = ops.transpose(output, (1, 0, 2))  # (3, 2, 2)
             output = ops.average(output, axis=1)  # (3, 2)

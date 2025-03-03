@@ -84,8 +84,8 @@ for i in range(repeats):
     teacher = Model(inputs=input, outputs=output)
 
     opt = keras.optimizers.Adam(learning_rate=0.003)
-    l = keras.losses.BinaryCrossentropy()
-    m = keras.metrics.BinaryAccuracy()
+    l = keras.losses.CategoricalCrossentropy(from_logits=True)
+    m = keras.metrics.CategoricalAccuracy()
 
     teacher.compile(optimizer=opt, loss=l, metrics=[m])
     teacher.summary()
