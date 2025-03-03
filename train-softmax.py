@@ -1,9 +1,9 @@
-import os
+# import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 import pandas as pd
-from keras.utils import set_random_seed
+from keras.api.utils import set_random_seed
 import json
 import random
 from utils.plots import *
@@ -46,11 +46,12 @@ for i in range(repeats):
     y_predict = model.predict(x_test)
     print(f"Shape of y train predict: {y_train_predict.shape}")
     print(f"Shape of y predict: {y_predict.shape}")
+    print(y_predict)
 
-    y_train = y_train[:, 0]
-    y_test = y_test[:, 0]
-    y_train_predict = y_train_predict[:, 0]
-    y_predict = y_predict[:, 0]
+    y_train = y_train[:, 1]
+    y_test = y_test[:, 1]
+    y_train_predict = y_train_predict[:, 1]
+    y_predict = y_predict[:, 1]
     print(f"Shape of y train predict: {y_train_predict.shape}")
     print(f"Shape of y predict: {y_predict.shape}")
 

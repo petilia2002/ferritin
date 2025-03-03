@@ -3,20 +3,20 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 import pandas as pd
-from keras.utils import set_random_seed
+from keras.api.utils import set_random_seed
 import json
 import random
 import numpy as np
 import keras
-import keras.ops as ops
-from keras.layers import Input, Dense, Dropout
-from keras.models import Model
+import keras.api.ops as ops
+from keras.api.layers import Input, Dense, Dropout
+from keras.api.models import Model
 from utils.plots import *
 from utils.models import *
 from utils.processing import *
 from package.distiller import *
 
-repeats = 1  # кол-во повторений обучения
+repeats = 3  # кол-во повторений обучения
 # Прочитаем данные:
 df = pd.read_csv("./data/ferritin-all.csv", sep=",", dtype={"hgb": float})
 print(df.head())
@@ -36,7 +36,6 @@ for i in range(repeats):
     )
 
     # Учитель:
-    """
     input = Input(shape=(n_features,))
     x = Dense(units=hidden_units, activation="relu")(input)
     output = Dense(units=2, activation="linear")(x)
@@ -49,46 +48,45 @@ for i in range(repeats):
 
     teacher.compile(optimizer=opt, loss=l, metrics=[m])
     teacher.summary()
-    """
 
-    bins = compute_bins(x_train, n_bins=10)
-    k = 10
-    input = Input(shape=(n_features,))
+    # bins = compute_bins(x_train, n_bins=10)
+    # k = 10
+    # input = Input(shape=(n_features,))
 
-    x = PiecewiseLinearTrainableEmbeddings(
-        bins=bins,
-        d_embedding=5,
-        linear=False,
-        linear_activation=True,
-        activation=True,
-    )(input)
-    x = Flatten()(x)
+    # x = PiecewiseLinearTrainableEmbeddings(
+    #     bins=bins,
+    #     d_embedding=5,
+    #     linear=False,
+    #     linear_activation=True,
+    #     activation=True,
+    # )(input)
+    # x = Flatten()(x)
 
-    # x = PiecewiseLinearEmbeddings(bins=bins)(input)
-    x = RepeatVector(k)(x)
-    x = BatchEnsembleLayer(
-        k=k,
-        units=hidden_units,
-        last_layer=False,
-        random_signs=False,
-        seed=None,
-    )(x)
-    output = BatchEnsembleLayer(
-        k=k,
-        units=2,
-        last_layer=True,
-        random_signs=False,
-        seed=None,
-    )(x)
+    # # x = PiecewiseLinearEmbeddings(bins=bins)(input)
+    # x = RepeatVector(k)(x)
+    # x = BatchEnsembleLayer(
+    #     k=k,
+    #     units=hidden_units,
+    #     last_layer=False,
+    #     random_signs=False,
+    #     seed=None,
+    # )(x)
+    # output = BatchEnsembleLayer(
+    #     k=k,
+    #     units=2,
+    #     last_layer=True,
+    #     random_signs=False,
+    #     seed=None,
+    # )(x)
 
-    teacher = Model(inputs=input, outputs=output)
+    # teacher = Model(inputs=input, outputs=output)
 
-    opt = keras.optimizers.Adam(learning_rate=0.003)
-    l = keras.losses.CategoricalCrossentropy(from_logits=True)
-    m = keras.metrics.CategoricalAccuracy()
+    # opt = keras.optimizers.Adam(learning_rate=0.003)
+    # l = keras.losses.CategoricalCrossentropy(from_logits=True)
+    # m = keras.metrics.CategoricalAccuracy()
 
-    teacher.compile(optimizer=opt, loss=l, metrics=[m])
-    teacher.summary()
+    # teacher.compile(optimizer=opt, loss=l, metrics=[m])
+    # teacher.summary()
 
     history = teacher.fit(
         x=x_train,
@@ -158,10 +156,10 @@ for i in range(repeats):
     print(f"Shape of y train predict: {y_train_predict.shape}")
     print(f"Shape of y predict: {y_predict.shape}")
 
-    y_train = y_train[:, 0]
-    y_test = y_test[:, 0]
-    y_train_predict = y_train_predict[:, 0]
-    y_predict = y_predict[:, 0]
+    y_train = y_train[:, 1]
+    y_test = y_test[:, 1]
+    y_train_predict = y_train_predict[:, 1]
+    y_predict = y_predict[:, 1]
     print(f"Shape of y train predict: {y_train_predict.shape}")
     print(f"Shape of y predict: {y_predict.shape}")
 
