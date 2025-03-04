@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
-from keras.layers import (
+from keras.api.layers import (
     Input,
     Dense,
     Dropout,
@@ -14,9 +14,9 @@ from keras.layers import (
     LayerNormalization,
     Activation,
 )
-from keras.models import Model
-from keras.initializers import Constant
-from keras.utils import plot_model
+from keras.api.models import Model
+from keras.api.initializers import Constant
+from keras.api.utils import plot_model
 
 # Добавляем корневую папку utils в sys.path:
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -30,14 +30,14 @@ from package.embeddings import *
 from package.ensembles import *
 from utils.losses import *
 import tensorflow as tf
-import keras.backend as K
+import keras.api.backend as K
 from keras import backend as K
 
 
-def create_model(hidden_units, class_weight, pos, neg) -> Model:
+def create_model(n_features, hidden_units, class_weight, pos, neg) -> Model:
     out_bias_init = Constant(value=np.log(pos / neg))
 
-    input = Input(shape=(12,))
+    input = Input(shape=(n_features,))
     x = Dense(units=hidden_units, activation="relu")(input)
     output = Dense(units=1, activation="sigmoid")(x)
 

@@ -3,19 +3,19 @@ import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 import pandas as pd
-from keras.utils import set_random_seed
+from keras.api.utils import set_random_seed
 import json
 import random
 from utils.plots import *
 from utils.models import *
 from utils.processing import *
 
-repeats = 1  # кол-во повторений обучения
+repeats = 3  # кол-во повторений обучения
 # Установим seed для воспроизводимости результатов:
 seeds = [random.randint(0, 2**32 - 1) for _ in range(repeats)]
 
 # Прочитаем данные:
-df = pd.read_csv("./data/ferritin-all.csv", sep=",", dtype={"hgb": float})
+df = pd.read_csv("./data/ferritin-all-calc.csv", sep=",", dtype={"hgb": float})
 print(df.head())
 print(df.shape)
 print(df.dtypes)
@@ -32,7 +32,7 @@ for i in range(repeats):
     class_weight, x_train, y_train, x_test, y_test, pos, neg = preparate_data(
         df, n_features, targets, scale=True, encode=False, seed=None
     )
-    model = create_model(hidden_units, class_weight, pos, neg)
+    model = create_model(n_features, hidden_units, class_weight, pos, neg)
     history_data = train_model(
         model,
         x_train,
@@ -75,7 +75,7 @@ for key in list_statistics[0].keys():
     avg_statistics[f"list_{key}"] = results
 
 with open(
-    f"./output/base_model/res-all_data-{hidden_units}-units.json",
+    f"./output/base_model/res-calc_data-{hidden_units}-units.json",
     "w",
 ) as file:
     json.dump(avg_statistics, file, ensure_ascii=False, indent=4)

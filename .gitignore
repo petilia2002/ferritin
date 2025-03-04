@@ -2,5 +2,6 @@
 /saved_models
 /config.ini
 /utils/__pycache__
+/catboost_info
 /test.py
 /test2.py
