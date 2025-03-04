@@ -6,6 +6,13 @@ import sklearn
 from sklearn.linear_model import LogisticRegression
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import SGDClassifier
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from catboost import Pool, CatBoostClassifier
+from lightgbm import LGBMClassifier
 
 sklearn.set_config(enable_metadata_routing=True)
 
@@ -40,16 +47,41 @@ class_weight = dict(
     )
 )
 
-repeats = 3  # кол-во повторов обучения
-model_names = ["logistic_regression", "naive_bayes"]
+repeats = 10  # кол-во повторов обучения
+# model_names = [
+#     "logistic_regression",
+#     "naive_bayes",
+#     "k_neighbors",
+#     "decision_tree",
+#     "SGD",
+#     "random_forest",
+#     "XGBoost",
+#     "CatBoost",
+# ]
+# classifiers = [
+#     OneVsRestClassifier(
+#         LogisticRegression(class_weight=None).set_fit_request(sample_weight=True)
+#     ),
+#     GaussianNB(),
+#     KNeighborsClassifier(n_neighbors=10),
+#     DecisionTreeClassifier(max_depth=5, min_samples_leaf=10, class_weight="balanced"),
+#     SGDClassifier(loss="log_loss"),
+#     RandomForestClassifier(n_estimators=100),
+#     XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=5),
+#     CatBoostClassifier(
+#         iterations=None,
+#         learning_rate=0.1,
+#         depth=5,
+#         loss_function="Logloss",
+#         class_weights=class_weight,
+#         verbose=True,
+#     ),
+# ]
+
+model_names = ["LightGBM"]
 classifiers = [
-    OneVsRestClassifier(
-        LogisticRegression(class_weight=None).set_fit_request(sample_weight=True)
-    ),
-    GaussianNB(),
+    LGBMClassifier(class_weight=class_weight, n_estimators=100, learning_rate=0.1)
 ]
-# model_names = ["naive_bayes"]
-# classifiers = [GaussianNB()]
 summary_statistics = []
 
 for j in range(len(classifiers)):
@@ -63,7 +95,13 @@ for j in range(len(classifiers)):
         sample_weight = np.array([class_weight[label] for label in y_train])
 
         clf = classifiers[j]
-        clf.fit(x_train, y_train, sample_weight=sample_weight)
+        if model_names[j] == "k_neighbors" or model_names[j] == "decision_tree":
+            clf.fit(x_train, y_train)
+        elif model_names[j] == "CatBoost" or model_names[j] == "LightGBM":
+            data = Pool(data=x_train, label=y_train)
+            clf.fit(x_train, y_train)
+        else:
+            clf.fit(x_train, y_train, sample_weight=sample_weight)
 
         y_train_predict = clf.predict_proba(x_train)
         y_predict = clf.predict_proba(x_test)
