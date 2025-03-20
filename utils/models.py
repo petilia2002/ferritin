@@ -53,16 +53,16 @@ def create_model(n_features, hidden_units, class_weight, pos, neg) -> Model:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     output_dir = os.path.join(script_dir, "../model_images")
     path = os.path.join(output_dir, f"model.png")
-    plot_model(
-        model=model,
-        to_file=path,
-        show_shapes=True,
-        show_dtype=True,
-        show_layer_names=False,
-        show_layer_activations=False,
-        show_trainable=True,
-        rankdir="TB",
-    )
+    # plot_model(
+    #     model=model,
+    #     to_file=path,
+    #     show_shapes=True,
+    #     show_dtype=True,
+    #     show_layer_names=False,
+    #     show_layer_activations=False,
+    #     show_trainable=True,
+    #     rankdir="TB",
+    # )
     model.summary()
 
     return model
@@ -218,6 +218,36 @@ def train_model(
         class_weight=class_weight,
         # sample_weight=sample_weight,
         callbacks=[reduce_lr()],
+    )
+    if isSave:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        output_dir = os.path.join(script_dir, "../saved_models")
+        model.save(os.path.join(output_dir, f"{filename}.keras"))
+
+    return history.history
+
+
+def train_yandex_model(
+    model: Model,
+    x_train: np.ndarray,
+    y_train: np.ndarray,
+    x_test: np.ndarray,
+    y_test: np.ndarray,
+    analytes: np.ndarray,
+    class_weight: Dict[int, float],
+    isSave: bool,
+    filename: str = "",
+) -> Dict[str, List[float]]:
+    history = model.fit(
+        x=[analytes, x_train],
+        y=y_train,
+        batch_size=500,
+        epochs=20,
+        verbose=2,
+        validation_split=0.2,
+        shuffle=True,
+        class_weight=class_weight,
+        # callbacks=[reduce_lr()],
     )
     if isSave:
         script_dir = os.path.dirname(os.path.abspath(__file__))
