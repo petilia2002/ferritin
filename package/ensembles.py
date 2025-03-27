@@ -1,14 +1,13 @@
 import numpy as np
 import tensorflow as tf
-from keras.api.layers import Layer
-import keras.api.ops as ops
-from keras.api.initializers import RandomNormal, GlorotUniform
-from keras.api.random import binomial
+from keras.layers import Layer
+from keras.initializers import RandomNormal, GlorotUniform
+import keras.backend as K
 
 
-def init_random_signs(shape, dtype=None):
-    bern = binomial(shape=shape, counts=1, probabilities=0.5, dtype=dtype)
-    return ops.add(ops.multiply(bern, 2.0), -1.0)
+def init_random_signs(shape, dtype=tf.float32):
+    bern = K.random_binomial(shape=shape, p=0.5, dtype=dtype)
+    return K.cast(bern * 2 - 1, dtype)
 
 
 class DeepEnsembleLayer(Layer):
@@ -40,17 +39,17 @@ class DeepEnsembleLayer(Layer):
         )
 
     def call(self, inputs):  # Inputs must be 3D. For example:
-        x = ops.transpose(inputs, (1, 0, 2))
-        x = ops.matmul(x, self.kernel)  # (2, 3, 2) x (2, 2, 2) = (2, 3, 2)
-        output = ops.add(x, self.bias)  # (2, 3, 2) + (2, 2) = (2, 3, 2)
+        x = tf.transpose(inputs, perm=[1, 0, 2])
+        x = tf.matmul(x, self.kernel)  # (2, 3, 2) x (2, 2, 2) = (2, 3, 2)
+        output = tf.add(x, self.bias)  # (2, 3, 2) + (2, 2) = (2, 3, 2)
         output = (
-            ops.sigmoid(output) if self.last_layer else ops.relu(output)
+            tf.nn.sigmoid(output) if self.last_layer else tf.nn.relu(output)
         )  # (2, 3, 2)
         if self.last_layer:
-            output = ops.transpose(output, (1, 0, 2))  # (3, 2, 2)
-            output = ops.average(output, axis=1)  # (3, 2)
+            output = tf.transpose(output, perm=[1, 0, 2])  # (3, 2, 2)
+            output = tf.reduce_mean(output, axis=1)  # (3, 2)
         else:
-            output = ops.transpose(output, (1, 0, 2))  # (3, 2, 2)
+            output = tf.transpose(output, perm=[1, 0, 2])  # (3, 2, 2)
         return output
 
 
@@ -101,17 +100,17 @@ class BatchEnsembleLayer(Layer):
         )
 
     def call(self, inputs):  # Inputs must be 3D. For example:
-        x = ops.transpose(inputs, (1, 0, 2))
-        x = ops.multiply(x, self.r)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
-        output = ops.matmul(x, self.kernel)  # (2, 3, 2) x (2, 2) = (2, 3, 2)
-        output = ops.multiply(output, self.s)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
-        output = ops.add(output, self.bias)  # (2, 3, 2) + (2, 1, 2) = (2, 3, 2)
-        output = output if self.last_layer else ops.relu(output)  # (2, 3, 2)
+        x = tf.transpose(inputs, perm=[1, 0, 2])
+        x = tf.multiply(x, self.r)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
+        output = tf.matmul(x, self.kernel)  # (2, 3, 2) x (2, 2) = (2, 3, 2)
+        output = tf.multiply(output, self.s)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
+        output = tf.add(output, self.bias)  # (2, 3, 2) + (2, 1, 2) = (2, 3, 2)
+        output = output if self.last_layer else tf.nn.relu(output)  # (2, 3, 2)
         if self.last_layer:
-            output = ops.transpose(output, (1, 0, 2))  # (3, 2, 2)
-            output = ops.average(output, axis=1)  # (3, 2)
+            output = tf.transpose(output, perm=[1, 0, 2])  # (3, 2, 2)
+            output = tf.reduce_mean(output, axis=1)  # (3, 2)
         else:
-            output = ops.transpose(output, (1, 0, 2))  # (3, 2, 2)
+            output = tf.transpose(output, perm=[1, 0, 2])  # (3, 2, 2)
         return output
 
 
@@ -174,19 +173,19 @@ class MiniEnsembleLayer(Layer):
         )
 
     def call(self, inputs):  # Inputs must be 3D. For example:
-        x = ops.transpose(inputs, (1, 0, 2))
+        x = tf.transpose(inputs, perm=[1, 0, 2])
         if self.use_r:
-            x = ops.multiply(x, self.r)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
-        output = ops.matmul(x, self.kernel)  # (2, 3, 2) x (2, 2) = (2, 3, 2)
+            x = tf.multiply(x, self.r)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
+        output = tf.matmul(x, self.kernel)  # (2, 3, 2) x (2, 2) = (2, 3, 2)
         if self.use_s:
-            output = ops.multiply(output, self.s)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
-        output = ops.add(output, self.bias)  # (2, 3, 2) + (2, ) = (2, 3, 2)
+            output = tf.multiply(output, self.s)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
+        output = tf.add(output, self.bias)  # (2, 3, 2) + (2, ) = (2, 3, 2)
         output = (
-            ops.sigmoid(output) if self.last_layer else ops.relu(output)
+            tf.nn.sigmoid(output) if self.last_layer else tf.nn.relu(output)
         )  # (2, 3, 2)
         if self.last_layer:
-            output = ops.transpose(output, (1, 0, 2))  # (3, 2, 2)
-            output = ops.average(output, axis=1)  # (3, 2)
+            output = tf.transpose(output, perm=[1, 0, 2])  # (3, 2, 2)
+            output = tf.reduce_mean(output, axis=1)  # (3, 2)
         else:
-            output = ops.transpose(output, (1, 0, 2))  # (3, 2, 2)
+            output = tf.transpose(output, perm=[1, 0, 2])  # (3, 2, 2)
         return output

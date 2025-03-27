@@ -1,5 +1,5 @@
 import numpy as np
-from keras.api.callbacks import Callback, EarlyStopping, ReduceLROnPlateau
+from keras.callbacks import Callback, EarlyStopping, ReduceLROnPlateau
 
 
 class AverageWeights(Callback):

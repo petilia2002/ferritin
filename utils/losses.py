@@ -1,6 +1,6 @@
 import tensorflow as tf
-import keras.api.backend as K
-from keras.api.losses import Loss
+import keras.backend as K
+from keras.losses import Loss
 
 
 class CustomBinaryCrossentropy(Loss):

@@ -4,7 +4,7 @@ import sys
 import numpy as np
 from sklearn.metrics import roc_curve, auc
 import keras
-from keras.api.layers import (
+from keras.layers import (
     Input,
     Dense,
     Dropout,
@@ -14,9 +14,9 @@ from keras.api.layers import (
     LayerNormalization,
     Activation,
 )
-from keras.api.models import Model
-from keras.api.initializers import Constant
-from keras.api.utils import plot_model
+from keras.models import Model
+from keras.initializers import Constant
+from keras.utils import plot_model
 
 # Добавляем корневую папку utils в sys.path:
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -30,7 +30,7 @@ from package.embeddings import *
 from package.ensembles import *
 from utils.losses import *
 import tensorflow as tf
-import keras.api.backend as K
+import keras.backend as K
 from keras import backend as K
 
 

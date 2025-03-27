@@ -1,5 +1,5 @@
-from keras.api.models import Model
-import keras.api.ops as ops
+import tensorflow as tf
+from keras.models import Model
 
 
 class Distiller(Model):
@@ -30,8 +30,8 @@ class Distiller(Model):
         student_loss = self.student_loss_fn(y, y_pred)
 
         distillation_loss = self.distillation_loss_fn(
-            ops.softmax(teacher_pred / self.temperature, axis=1),
-            ops.softmax(y_pred / self.temperature, axis=1),
+            tf.nn.softmax(teacher_pred / self.temperature, axis=1),
+            tf.nn.softmax(y_pred / self.temperature, axis=1),
         ) * (self.temperature**2)
 
         loss = self.alpha * student_loss + (1 - self.alpha) * distillation_loss

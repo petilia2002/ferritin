@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from keras.api.layers import Layer
-import keras.api.ops as ops
+from keras.layers import Layer
 
 
 class LinearEmbeddings(Layer):
@@ -25,9 +24,9 @@ class LinearEmbeddings(Layer):
         )
 
     def call(self, inputs):
-        output = ops.add(self.bias, ops.multiply(self.kernel, inputs[..., None]))
+        output = tf.add(self.bias, tf.multiply(self.kernel, inputs[..., None]))
         if self.activation:
-            output = ops.relu(output)
+            output = tf.nn.relu(output)
         return output
 
 
@@ -56,11 +55,11 @@ class NDense(Layer):
         )
 
     def call(self, inputs):
-        x = ops.transpose(inputs, (1, 0, 2))
-        output = ops.matmul(x, self.kernel)
-        output = ops.transpose(output, (1, 0, 2))
+        x = tf.transpose(inputs, perm=[1, 0, 2])
+        output = tf.matmul(x, self.kernel)
+        output = tf.transpose(output, perm=[1, 0, 2])
         if self.is_bias:
-            output = ops.add(output, self.bias)
+            output = tf.add(output, self.bias)
         return output
 
 
@@ -107,7 +106,7 @@ class PiecewiseLinearEncoding(Layer):
                 ]
             )
         )
-        self.dif_mask = ops.convert_to_tensor(self.dif_mask)
+        self.dif_mask = tf.convert_to_tensor(self.dif_mask)
 
         weights = np.zeros((len(n_bins), self.max_n_bins), dtype=float)
         bias = np.zeros((len(n_bins), self.max_n_bins), dtype=float)
@@ -124,8 +123,8 @@ class PiecewiseLinearEncoding(Layer):
         self.set_weights([weights, bias])
 
     def call(self, inputs):
-        output = ops.add(self.bias, ops.multiply(self.kernel, inputs[..., None]))
-        return ops.clip(x=output, x_min=0.0, x_max=1.0)
+        output = tf.add(self.bias, tf.multiply(self.kernel, inputs[..., None]))
+        return tf.clip_by_value(t=output, clip_value_min=0.0, clip_value_max=1.0)
 
 
 class PiecewiseLinearEmbeddings(Layer):
@@ -184,6 +183,6 @@ class PiecewiseLinearTrainableEmbeddings(Layer):
         x_ple = self.n_dense(x_ple)  # (batch_size, n_features, d_embedding)
 
         if self.activation:
-            x_ple = ops.relu(x_ple)  # (batch_size, n_features, d_embedding)
+            x_ple = tf.nn.relu(x_ple)  # (batch_size, n_features, d_embedding)
 
-        return ops.add(x_ple, x_linear) if x_linear is not None else x_ple
+        return tf.add(x_ple, x_linear) if x_linear is not None else x_ple
