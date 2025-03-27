@@ -33,6 +33,6 @@ print(df.head())
 print(df.shape)
 print(df.dtypes)
 
-df.to_csv("data/lab.csv", sep=",", index=False)
+df.to_csv("data/lab-2025.csv", sep=",", index=False)
 connection.close()
 print(f"Closed {database} database")

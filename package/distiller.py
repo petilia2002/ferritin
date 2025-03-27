@@ -1,5 +1,5 @@
-from keras.models import Model
-import keras.ops as ops
+from keras.api.models import Model
+import keras.api.ops as ops
 
 
 class Distiller(Model):

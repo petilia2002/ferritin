@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
-from keras.layers import Layer
-import keras.ops as ops
+from keras.api.layers import Layer
+import keras.api.ops as ops
 
 
 class LinearEmbeddings(Layer):

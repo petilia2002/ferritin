@@ -1,9 +1,9 @@
 import numpy as np
 import tensorflow as tf
-from keras.layers import Layer
-import keras.ops as ops
-from keras.initializers import RandomNormal, GlorotUniform
-from keras.random import binomial
+from keras.api.layers import Layer
+import keras.api.ops as ops
+from keras.api.initializers import RandomNormal, GlorotUniform
+from keras.api.random import binomial
 
 
 def init_random_signs(shape, dtype=None):
