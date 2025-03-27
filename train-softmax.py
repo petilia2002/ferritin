@@ -3,7 +3,7 @@
 # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 import pandas as pd
-from keras.api.utils import set_random_seed
+from keras.utils import set_random_seed
 import json
 import random
 from utils.plots import *

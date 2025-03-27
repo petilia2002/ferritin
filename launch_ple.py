@@ -30,13 +30,13 @@ print(f"{n_features=}")
 k = 10
 hidden_units = 90
 scale = False
-random_signs = True
+random_signs = False
 use_r, use_s = True, True
 n_bins = 20
 d_embedding = 32
 
-class_weight, x_train, y_train, x_test, y_test = preparate_data(
-    df, n_features, targets, scale=scale, seed=None
+class_weight, x_train, y_train, x_test, y_test, pos, neg = preparate_data(
+    df, n_features, targets, scale=scale, encode=False, seed=None
 )
 bins = compute_bins(x_train, n_bins=n_bins)
 model = create_ensemble_with_ple(

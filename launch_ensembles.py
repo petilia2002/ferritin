@@ -27,12 +27,12 @@ print(f"{n_features=}")
 k = 5
 hidden_units = 90
 scale = True
-random_signs = True
-use_r, use_s = False, True
+random_signs = False
+use_r, use_s = True, True
 
 # set_random_seed(seed=42)
-class_weight, x_train, y_train, x_test, y_test = preparate_data(
-    df, n_features, targets, scale=scale, seed=None
+class_weight, x_train, y_train, x_test, y_test, pos, neg = preparate_data(
+    df, n_features, targets, scale=scale, encode=False, seed=None
 )
 model = create_ensemble(
     k=k, hidden_units=hidden_units, random_signs=random_signs, use_r=use_r, use_s=use_s

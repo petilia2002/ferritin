@@ -21,7 +21,7 @@ import numpy as np
 np.set_printoptions(suppress=True)
 
 import pandas as pd
-from keras.api.utils import set_random_seed
+from keras.utils import set_random_seed
 import json
 import random
 from utils.plots import *
@@ -47,7 +47,7 @@ class_weight = dict(
     )
 )
 
-repeats = 10  # кол-во повторов обучения
+repeats = 3  # кол-во повторов обучения
 # model_names = [
 #     "logistic_regression",
 #     "naive_bayes",

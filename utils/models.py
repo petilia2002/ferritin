@@ -77,7 +77,6 @@ def create_softmax_model(hidden_units, class_weight) -> Model:
 
     opt = keras.optimizers.Adam(learning_rate=0.003)
     l = keras.losses.CategoricalCrossentropy()
-    # l = CustomCategoricalCrossentropy(class_weight)
     m = keras.metrics.CategoricalAccuracy()
 
     model.compile(optimizer=opt, loss=l, metrics=[m])
@@ -198,13 +197,13 @@ def train_model(
     isSave: bool,
     filename: str = "",
 ) -> Dict[str, List[float]]:
-    sample_weight = (
-        np.array([class_weight[int(y)] for y in y_train.flatten()])
-        if y_train.shape[-1] == 1
-        else np.array([class_weight[i] for i in np.where(y_train > 0)[-1]])
-    )
-    sample_weight = sample_weight.astype(np.float32)
-    sample_weight = sample_weight.reshape(-1, 1)
+    # sample_weight = (
+    #     np.array([class_weight[int(y)] for y in y_train.flatten()])
+    #     if y_train.shape[-1] == 1
+    #     else np.array([class_weight[i] for i in np.where(y_train > 0)[-1]])
+    # )
+    # sample_weight = sample_weight.astype(np.float32)
+    # sample_weight = sample_weight.reshape(-1, 1)
 
     history = model.fit(
         x=x_train,
@@ -212,11 +211,9 @@ def train_model(
         batch_size=500,
         epochs=100,
         verbose=2,
-        # validation_split=0.2,
-        validation_data=(x_test, y_test),
+        validation_split=0.2,
         shuffle=True,
         class_weight=class_weight,
-        # sample_weight=sample_weight,
         callbacks=[reduce_lr()],
     )
     if isSave:

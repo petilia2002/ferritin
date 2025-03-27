@@ -26,13 +26,13 @@ class DeepEnsembleLayer(Layer):
 
     def build(self, input_shape):
         self.kernel = self.add_weight(
-            (self.k, input_shape[-1], self.units),
+            shape=(self.k, input_shape[-1], self.units),
             initializer=GlorotUniform(seed=self.seed),
             trainable=True,
             name="kernel",
         )
         self.bias = self.add_weight(
-            (self.k, 1, self.units),
+            shape=(self.k, 1, self.units),
             initializer=RandomNormal(mean=0.0, stddev=0.5, seed=self.seed),
             trainable=True,
             name="bias",
@@ -75,25 +75,25 @@ class BatchEnsembleLayer(Layer):
 
     def build(self, input_shape):
         self.kernel = self.add_weight(
-            (input_shape[-1], self.units),
+            shape=(input_shape[-1], self.units),
             initializer=GlorotUniform(seed=self.seed),
             trainable=True,
             name="kernel",
         )
         self.bias = self.add_weight(
-            (self.k, 1, self.units),
+            shape=(self.k, 1, self.units),
             initializer=RandomNormal(mean=0.0, stddev=0.5, seed=self.seed),
             trainable=True,
             name="bias",
         )
         self.r = self.add_weight(
-            (self.k, 1, input_shape[-1]),
+            shape=(self.k, 1, input_shape[-1]),
             initializer=self.initializer,
             trainable=True,
             name="r",
         )
         self.s = self.add_weight(
-            (self.k, 1, self.units),
+            shape=(self.k, 1, self.units),
             initializer=self.initializer,
             trainable=True,
             name="s",
@@ -140,20 +140,20 @@ class MiniEnsembleLayer(Layer):
 
     def build(self, input_shape):
         self.kernel = self.add_weight(
-            (input_shape[-1], self.units),
+            shape=(input_shape[-1], self.units),
             initializer=GlorotUniform(seed=self.seed),
             trainable=True,
             name="kernel",
         )
         self.bias = self.add_weight(
-            (self.units,),
+            shape=(self.units,),
             initializer=RandomNormal(mean=0.0, stddev=0.5, seed=self.seed),
             trainable=True,
             name="bias",
         )
         self.r = (
             self.add_weight(
-                (self.k, 1, input_shape[-1]),
+                shape=(self.k, 1, input_shape[-1]),
                 initializer=self.initializer,
                 trainable=True,
                 name="r",
@@ -163,7 +163,7 @@ class MiniEnsembleLayer(Layer):
         )
         self.s = (
             self.add_weight(
-                (self.k, 1, self.units),
+                shape=(self.k, 1, self.units),
                 initializer=self.initializer,
                 trainable=True,
                 name="s",
