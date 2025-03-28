@@ -10,9 +10,9 @@ from utils.plots import *
 from utils.models import *
 from utils.processing import *
 
-repeats = 1  # кол-во повторений обучения
+repeats = 3  # кол-во повторений обучения
 # Прочитаем данные:
-df = pd.read_csv("./data/ferritin-all.csv", sep=",", dtype={"hgb": float})
+df = pd.read_csv("./data/ferritin-lab1.csv", sep=",", dtype={"hgb": float})
 print(df.head())
 print(df.shape)
 print(df.dtypes)
@@ -79,7 +79,7 @@ for key in list_statistics[0].keys():
     avg_statistics[f"list_{key}"] = results
 
 with open(
-    f"./output/base_model/res-all_data-{hidden_units}-units.json",
+    f"./output/base_model/res-lab1-{hidden_units}-units.json",
     "w",
 ) as file:
     json.dump(avg_statistics, file, ensure_ascii=False, indent=4)

@@ -75,7 +75,7 @@ def create_softmax_model(hidden_units, class_weight) -> Model:
 
     model = Model(inputs=input, outputs=output)
 
-    opt = keras.optimizers.Adam(learning_rate=0.003)
+    opt = keras.optimizers.Adam(learning_rate=0.0002)
     l = keras.losses.CategoricalCrossentropy()
     m = keras.metrics.CategoricalAccuracy()
 

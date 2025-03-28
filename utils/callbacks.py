@@ -33,7 +33,6 @@ def early_stopping() -> EarlyStopping:
         mode="auto",
         baseline=None,
         restore_best_weights=True,
-        start_from_epoch=0,
     )
 
 
