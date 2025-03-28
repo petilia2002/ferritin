@@ -10,6 +10,10 @@ def init_random_signs(shape, dtype=tf.float32):
     return K.cast(bern * 2 - 1, dtype)
 
 
+def init_random_normal(shape, dtype=tf.float32):
+    return tf.random.normal(shape, mean=0.0, stddev=0.5, dtype=dtype)
+
+
 class DeepEnsembleLayer(Layer):
     def __init__(
         self,
@@ -23,6 +27,7 @@ class DeepEnsembleLayer(Layer):
         self.k = k
         self.last_layer = last_layer
         self.seed = seed
+        self.bias_initializer = RandomNormal(mean=0.0, stddev=0.5, seed=self.seed)
 
     def build(self, input_shape):
         self.kernel = self.add_weight(
@@ -33,7 +38,7 @@ class DeepEnsembleLayer(Layer):
         )
         self.bias = self.add_weight(
             shape=(self.k, 1, self.units),
-            initializer=RandomNormal(mean=0.0, stddev=0.5, seed=self.seed),
+            initializer=self.bias_initializer,
             trainable=True,
             name="bias",
         )
@@ -67,11 +72,7 @@ class BatchEnsembleLayer(Layer):
         self.k = k
         self.last_layer = last_layer
         self.seed = seed
-        self.initializer = (
-            init_random_signs
-            if random_signs
-            else RandomNormal(mean=0.0, stddev=0.5, seed=self.seed)
-        )
+        self.initializer = init_random_signs if random_signs else init_random_normal
 
     def build(self, input_shape):
         self.kernel = self.add_weight(
@@ -82,7 +83,7 @@ class BatchEnsembleLayer(Layer):
         )
         self.bias = self.add_weight(
             shape=(self.k, 1, self.units),
-            initializer=RandomNormal(mean=0.0, stddev=0.5, seed=self.seed),
+            initializer=self.initializer,
             trainable=True,
             name="bias",
         )
@@ -105,7 +106,9 @@ class BatchEnsembleLayer(Layer):
         output = tf.matmul(x, self.kernel)  # (2, 3, 2) x (2, 2) = (2, 3, 2)
         output = tf.multiply(output, self.s)  # (2, 3, 2) x (2, 1, 2) = (2, 3, 2)
         output = tf.add(output, self.bias)  # (2, 3, 2) + (2, 1, 2) = (2, 3, 2)
-        output = output if self.last_layer else tf.nn.relu(output)  # (2, 3, 2)
+        output = (
+            tf.nn.sigmoid(output) if self.last_layer else tf.nn.relu(output)
+        )  # (2, 3, 2)
         if self.last_layer:
             output = tf.transpose(output, perm=[1, 0, 2])  # (3, 2, 2)
             output = tf.reduce_mean(output, axis=1)  # (3, 2)
@@ -132,11 +135,7 @@ class MiniEnsembleLayer(Layer):
         self.use_s = use_s
         self.last_layer = last_layer
         self.seed = seed
-        self.initializer = (
-            init_random_signs
-            if random_signs
-            else RandomNormal(mean=0.0, stddev=0.5, seed=self.seed)
-        )
+        self.initializer = init_random_signs if random_signs else init_random_normal
 
     def build(self, input_shape):
         self.kernel = self.add_weight(
@@ -147,7 +146,7 @@ class MiniEnsembleLayer(Layer):
         )
         self.bias = self.add_weight(
             shape=(self.units,),
-            initializer=RandomNormal(mean=0.0, stddev=0.5, seed=self.seed),
+            initializer=self.initializer,
             trainable=True,
             name="bias",
         )

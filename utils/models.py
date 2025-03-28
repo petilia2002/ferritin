@@ -35,7 +35,7 @@ from keras import backend as K
 
 
 def create_model(n_features, hidden_units, class_weight, pos, neg) -> Model:
-    out_bias_init = Constant(value=np.log(pos / neg))
+    # out_bias_init = Constant(value=np.log(pos / neg))
 
     input = Input(shape=(n_features,))
     x = Dense(units=hidden_units, activation="relu")(input)
@@ -154,8 +154,8 @@ def create_ensemble_with_ple(
         bins=bins,
         d_embedding=d_embedding,
         linear=False,
-        linear_activation=True,
-        activation=True,
+        linear_activation=False,
+        activation=False,
     )(input)
     x = Flatten()(x)
 

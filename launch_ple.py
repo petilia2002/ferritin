@@ -6,16 +6,11 @@ import pandas as pd
 from keras.utils import set_random_seed
 import json
 import random
+
 from utils.plots import plot_loss
-from utils.models import (
-    create_model,
-    create_ensemble,
-    create_ensemble_with_ple,
-    train_model,
-    evaluate_model,
-)
 from utils.processing import preparate_data
 from package.embeddings import *
+from utils.models import *
 
 # Прочитаем данные:
 df = pd.read_csv("./data/ferritin-all.csv", sep=",", dtype={"hgb": float})
@@ -39,8 +34,9 @@ class_weight, x_train, y_train, x_test, y_test, pos, neg = preparate_data(
     df, n_features, targets, scale=scale, encode=False, seed=None
 )
 bins = compute_bins(x_train, n_bins=n_bins)
+
 model = create_ensemble_with_ple(
-    k=k, hidden_units=hidden_units, bins=bins, d_embedding=d_embedding
+    n_features, k=k, hidden_units=hidden_units, bins=bins, d_embedding=d_embedding
 )
 
 history_data = train_model(

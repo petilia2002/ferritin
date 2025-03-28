@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from keras.layers import Layer
+import keras
 
 
 class LinearEmbeddings(Layer):
@@ -43,7 +44,7 @@ class NDense(Layer):
     def build(self, input_shape):  # (batch_size, n_features, d_embedding)
         self.kernel = self.add_weight(
             shape=(self.n_features, input_shape[-1], self.out_embedding),
-            initializer=self.initializer,
+            initializer=keras.initializers.GlorotUniform(seed=None),
             trainable=True,
             name="kernel",
         )
